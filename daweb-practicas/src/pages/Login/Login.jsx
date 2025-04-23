@@ -1,35 +1,39 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import { FaGithub } from "react-icons/fa";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    navigate("/gestor");
 
-    try {
-      const response = await fetch("URL_DEL_BACKEND_ARSO/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
+    // try {
+    //   const response = await fetch("URL_DEL_BACKEND_ARSO/auth/login", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ username, password }),
+    //   });
 
-      const data = await response.json();
+    //   const data = await response.json();
 
-      if (response.ok) {
-        localStorage.setItem("token", data.token);
-        window.location.href = "/dashboard";
-      } else {
-        alert(data.message || "Error al iniciar sesión");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Error de conexión");
-    }
+    //   if (response.ok) {
+    //     localStorage.setItem("token", data.token);
+    //     window.location.href = "/dashboard";
+    //   } else {
+    //     alert(data.message || "Error al iniciar sesión");
+    //   }
+    // } catch (error) {
+    //   console.error("Error:", error);
+    //   alert("Error de conexión");
+    // }
   };
 
   const handleGithubLogin = () => {
