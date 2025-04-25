@@ -2,43 +2,76 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import { FaGithub } from "react-icons/fa";
+import { API_ROUTES } from "../../config/apiConfig";
+import { useAuth } from "../../context/AuthContext";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
+  const { handleLogin } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/gestor");
 
-    // try {
-    //   const response = await fetch("URL_DEL_BACKEND_ARSO/auth/login", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({ username, password }),
-    //   });
+    try {
+      const formData = new URLSearchParams();
+      formData.append("username", username);
+      formData.append("password", password);
 
-    //   const data = await response.json();
+      const response = await fetch(API_ROUTES.LOGIN, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formData.toString(),
+        credentials: "include",
+      });
 
-    //   if (response.ok) {
-    //     localStorage.setItem("token", data.token);
-    //     window.location.href = "/dashboard";
-    //   } else {
-    //     alert(data.message || "Error al iniciar sesión");
-    //   }
-    // } catch (error) {
-    //   console.error("Error:", error);
-    //   alert("Error de conexión");
-    // }
+      const data = await response.json();
+
+      if (response.ok) {
+        handleLogin({
+          idUsuario: data.idUsuario,
+          roles: data.roles,
+        });
+
+        navigate("/gestor");
+      } else {
+        alert("Error al iniciar sesión");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error de conexión");
+    }
   };
 
   const handleGithubLogin = () => {
-    // Redirige al endpoint de autenticación de GitHub de tu backend
-    window.location.href = "URL_DEL_BACKEND_ARSO/auth/github";
+    // Abre una ventana emergente para el login con GitHub
+    const popup = window.open(
+      API_ROUTES.GITHUB_LOGIN,
+      "github-login",
+      "width=600,height=600"
+    );
+
+    // Escucha los mensajes de la ventana emergente
+    const messageListener = (event) => {
+      // Verifica el origen del mensaje por seguridad
+      if (event.origin !== "http://localhost:8090") return;
+
+      if (event.data.token) {
+        // Guarda el token y redirige
+        navigate("/gestor");
+        popup.close();
+        window.removeEventListener("message", messageListener);
+      } else if (event.data.error) {
+        alert(event.data.error);
+        popup.close();
+        window.removeEventListener("message", messageListener);
+      }
+    };
+
+    window.addEventListener("message", messageListener);
   };
 
   return (

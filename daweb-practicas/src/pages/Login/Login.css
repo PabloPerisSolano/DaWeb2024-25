@@ -1,14 +1,10 @@
-body {
-  background-image: linear-gradient(to bottom right, violet, purple);
-}
-
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   flex: 1;
   padding: 1rem;
-  }
+}
 
 .login-card {
   background: white;

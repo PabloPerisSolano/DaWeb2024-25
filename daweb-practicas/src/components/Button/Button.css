@@ -1,0 +1,45 @@
+/* Base para todos los botones */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+/* Estados */
+.button:hover {
+  opacity: 0.9;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Variantes */
+.button.primary {
+  background-color: #646cff;
+  color: white;
+}
+
+.button.danger {
+  background-color: #ff4757;
+  color: white;
+}
+
+/* Elementos internos */
+.button-icon {
+  display: flex;
+  font-size: 1.2rem;
+}
+
+.button-label {
+  white-space: nowrap;
+}
