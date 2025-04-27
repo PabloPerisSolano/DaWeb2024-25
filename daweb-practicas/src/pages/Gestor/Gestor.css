@@ -1,7 +1,6 @@
 .contenedor-gestor {
   display: flex;
   flex-direction: column;
-  width: 100vw;
 }
 
 .cabecera-superior {

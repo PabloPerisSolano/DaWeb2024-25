@@ -6,10 +6,14 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
   const handleLogin = (userData) => {
     setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
   const handleLogout = async () => {
@@ -18,6 +22,7 @@ export function AuthProvider({ children }) {
       credentials: "include",
     });
     setUser(null);
+    localStorage.removeItem("user");
     navigate("/login");
   };
 

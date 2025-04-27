@@ -26,8 +26,6 @@ function Gestor() {
 
   return (
     <div className="contenedor-gestor">
-      <Header />
-
       <main className="contenido-principal">
         {activeTab === "home" && <Home />}
       </main>

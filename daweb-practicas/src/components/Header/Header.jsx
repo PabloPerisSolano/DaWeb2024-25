@@ -1,15 +1,24 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import NavUser from "./NavUser";
-import NavAdmin from "./NavAdmin";
-import { FaSignOutAlt } from "react-icons/fa";
-import { Button } from "../Button/Button";
+import NavMenu from "./NavMenu";
+import { FaSignOutAlt, FaBars, FaUser } from "react-icons/fa";
 import "./Header.css";
 
 function Header() {
   const { user, handleLogout } = useAuth();
 
   if (!user) return null;
+
+  const adminLinks = [
+    { name: "Espacios Físicos", path: "/espacios" },
+    { name: "Eventos", path: "/eventos" },
+  ];
+
+  const userLinks = [
+    { name: "Ver Eventos", path: "/listado-eventos" },
+    { name: "Mis Reservas Activas", path: "/reservas-activas" },
+    { name: "Mis Reservas Previas", path: "/reservas-previas" },
+  ];
 
   const userRoles = {
     isAdmin:
@@ -24,35 +33,35 @@ function Header() {
 
   return (
     <header className="app-header">
-      <div className="logo">
-        <h1>{headerTitle}</h1>
-      </div>
+      <section className="dropdown">
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <FaBars />
+        </button>
+        <ul className="dropdown-menu">
+          <NavMenu links={userRoles.isAdmin ? adminLinks : userLinks} />
+        </ul>
+      </section>
 
-      <nav className="main-nav">
-        {userRoles.isAdmin ? (
-          <NavAdmin />
-        ) : userRoles.isUser ? (
-          <NavUser />
-        ) : (
-          <span>No tienes permisos para acceder</span>
-        )}
-      </nav>
+      <section className="fw-bold d-flex align-items-center gap-2">
+        <FaUser className="user-icon" />
+        <span>{headerTitle}</span>
+      </section>
 
-      {/* <Button
-        icon={<FaSignOutAlt />}
-        variant="danger"
-        onClick={handleLogout}
-        aria-label="Cerrar sesión"
-        className="logout-btn"
-      >
-        Cerrar sesión
-      </Button> */}
+      <section className="main-nav">
+        <NavMenu links={userRoles.isAdmin ? adminLinks : userLinks} />
+      </section>
+
       <button
-        className="btn btn-danger d-flex align-items-center gap-2"
+        className="btn btn-danger d-flex align-items-center justify-content-center gap-2"
         onClick={handleLogout}
       >
         <FaSignOutAlt />
-        Cerrar sesión
+        <span className="cerrar-sesion">Cerrar sesión</span>
       </button>
     </header>
   );
