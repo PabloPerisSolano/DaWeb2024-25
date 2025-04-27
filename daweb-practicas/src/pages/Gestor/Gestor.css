@@ -1,65 +1,66 @@
 .contenedor-gestor {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
 }
 
 .cabecera-superior {
-    background: #1e293b;
-    color: white;
-    padding: 1rem;
+  background: #1e293b;
+  color: white;
+  padding: 1rem;
 }
 
 .mensaje-bienvenida {
-    margin: 0.5rem 0 0;
-    color: #94a3b8;
-    font-size: 0.9rem;
+  margin: 0.5rem 0 0;
+  color: #94a3b8;
+  font-size: 0.9rem;
 }
 
 .navegacion-principal {
-    display: flex;
-    gap: 1rem;
-    padding: 1rem 0;
-    justify-content: center;
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0;
+  justify-content: center;
 }
 
 .boton-nav {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: #461ca6;
-    color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #461ca6;
+  color: white;
 }
 
 .contenido-principal {
-    padding: 1rem;
-    width: 100%;
+  padding: 1rem;
+  width: 100%;
 }
 
 .boton-logout {
-    position: absolute;
-    top: 0.5rem;
-    right: 1rem;
-    background: transparent;
-    color: #000000;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+  background: transparent;
+  color: #000000;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 /* Responsive básico */
 @media (max-width: 768px) {
-    .navegacion-principal {
-        overflow-x: auto;
-        padding-bottom: 0.5rem;
-    }
+  .navegacion-principal {
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
 
-    .boton-nav {
-        padding: 0.5rem;
-        font-size: 0.9rem;
-    }
+  .boton-nav {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
 
-    .contenido-principal {
-        padding: 0.5rem;
-    }
+  .contenido-principal {
+    padding: 0.5rem;
+  }
 }

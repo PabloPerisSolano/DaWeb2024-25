@@ -1,7 +1,7 @@
+import "./Login.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Login.css";
-import { FaGithub } from "react-icons/fa";
+import { FaGithub, FaSignInAlt } from "react-icons/fa";
 import { API_ROUTES } from "../../config/apiConfig";
 import { useAuth } from "../../context/AuthContext";
 
@@ -38,7 +38,7 @@ function Login() {
 
         navigate("/gestor");
       } else {
-        alert("Error al iniciar sesión");
+        alert("Error al iniciar sesión.");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -77,41 +77,56 @@ function Login() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h2>Iniciar Sesión</h2>
+        <h2 className="mb-4">Iniciar Sesión</h2>
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="username">Nombre de Usuario</label>
+          <section className="mb-3">
+            <label htmlFor="username" className="form-label">
+              Nombre de Usuario
+            </label>
             <input
               type="text"
+              className="form-control"
               id="username"
+              placeholder="Tu nombre de usuario"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              placeholder="Tu nombre de usuario"
             />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Contraseña</label>
+          </section>
+          <section className="mb-3">
+            <label htmlFor="password" className="form-label">
+              Contraseña
+            </label>
             <input
               type="password"
+              className="form-control"
               id="password"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              placeholder="••••••••"
             />
-          </div>
-          <button type="submit" className="login-button">
-            Acceder
+          </section>
+          <button
+            type="submit"
+            className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
+          >
+            <FaSignInAlt />
+            Iniciar Sesión
           </button>
         </form>
 
-        <div className="login-divider">
-          <span>o</span>
+        <div className="d-flex align-items-center my-2">
+          <hr className="flex-grow-1" />
+          <span className="mx-2 text-muted">o</span>
+          <hr className="flex-grow-1" />
         </div>
 
-        <button onClick={handleGithubLogin} className="github-button">
-          <FaGithub className="github-icon" />
+        <button
+          onClick={handleGithubLogin}
+          className="btn btn-dark w-100 d-flex align-items-center justify-content-center gap-2"
+        >
+          <FaGithub className="button-icon" />
           Continuar con GitHub
         </button>
       </div>
