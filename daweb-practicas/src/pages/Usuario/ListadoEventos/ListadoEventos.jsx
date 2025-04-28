@@ -1,45 +1,83 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { API_ROUTES } from "../../../config/apiConfig";
+import FiltrosEventos from "./FiltrosEventos";
+import EventoCard from "./EventoCard";
+import ModalReserva from "./ModalReserva";
+import "./ListadoEventos.css";
 
-function ListadoEventos() {
-  const eventos = [
-    {
-      id: 1,
-      nombre: "Concierto de Rock",
-      fecha: "2025-05-10",
-      lugar: "Auditorio Central",
-    },
-    {
-      id: 2,
-      nombre: "Feria de Tecnología",
-      fecha: "2025-06-15",
-      lugar: "Centro de Convenciones",
-    },
-    {
-      id: 3,
-      nombre: "Exposición de Arte",
-      fecha: "2025-07-20",
-      lugar: "Galería Nacional",
-    },
-  ];
+const ListadoEventos = () => {
+  const [eventos, setEventos] = useState([]);
+  const [filtros, setFiltros] = useState({
+    nombre: "",
+    categoria: "",
+    cancelado: null,
+    espacioFisico: "",
+    plazasLibresMin: 0,
+  });
+  const [showModalReserva, setShowModalReserva] = useState(false);
+  const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
+  const [plazasReserva, setPlazasReserva] = useState(1);
+
+  useEffect(() => {
+    fetchEventos();
+  }, [filtros]);
+
+  const fetchEventos = async () => {
+    const response = await fetch(API_ROUTES.EVENTOS_LIST, {
+      credentials: "include",
+    });
+    const data = await response.json();
+    setEventos(data);
+  };
+
+  const handleReservar = (evento) => {
+    setEventoSeleccionado(evento);
+    console.log(evento);
+    setShowModalReserva(true);
+  };
+
+  const confirmarReserva = async () => {
+    if (
+      eventoSeleccionado.plazas >= plazasReserva &&
+      !eventoSeleccionado.cancelado
+    ) {
+      await fetch("URL_API_RESERVAS", {
+        method: "POST",
+        body: JSON.stringify({
+          eventoId: eventoSeleccionado.id,
+          plazas: plazasReserva,
+        }),
+      });
+      setShowModalReserva(false);
+      fetchEventos();
+    }
+  };
 
   return (
-    <div className="listado-eventos-page">
-      <h1>Listado de Eventos</h1>
-      <p>
-        Explora los eventos disponibles y encuentra algo interesante para ti.
-      </p>
+    <div className="container">
+      <FiltrosEventos filtros={filtros} setFiltros={setFiltros} />
 
-      <ul className="eventos-list">
+      <div className="row mt-4">
         {eventos.map((evento) => (
-          <li key={evento.id} className="evento-item">
-            <h2>{evento.nombre}</h2>
-            <p>Fecha: {evento.fecha}</p>
-            <p>Lugar: {evento.lugar}</p>
-          </li>
+          <EventoCard
+            key={evento.id}
+            evento={evento}
+            onReservar={handleReservar}
+          />
         ))}
-      </ul>
+      </div>
+
+      {showModalReserva && (
+        <ModalReserva
+          onHide={() => setShowModalReserva(false)}
+          evento={eventoSeleccionado}
+          plazasReserva={plazasReserva}
+          setPlazasReserva={setPlazasReserva}
+          onConfirm={confirmarReserva}
+        />
+      )}
     </div>
   );
-}
+};
 
 export default ListadoEventos;
