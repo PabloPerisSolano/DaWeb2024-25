@@ -5,13 +5,13 @@ import { FaSignOutAlt, FaBars, FaUser } from "react-icons/fa";
 import "./Header.css";
 
 function Header() {
-  const { user, handleLogout } = useAuth();
+  const { user, userRoles, handleLogout } = useAuth();
 
   if (!user) return null;
 
   const adminLinks = [
-    { name: "Espacios Físicos", path: "/espacios" },
-    { name: "Eventos", path: "/eventos" },
+    { name: "Gestionar Espacios Físicos", path: "/espacios" },
+    { name: "Gestionar Eventos", path: "/eventos" },
   ];
 
   const userLinks = [
@@ -19,13 +19,6 @@ function Header() {
     { name: "Mis Reservas Activas", path: "/reservas-activas" },
     { name: "Mis Reservas Previas", path: "/reservas-previas" },
   ];
-
-  const userRoles = {
-    isAdmin:
-      user?.roles.includes("GESTOR_EVENTOS") &&
-      user?.roles.includes("PROPIETARIO_ESPACIOS"),
-    isUser: user?.roles.includes("USUARIO"),
-  };
 
   const headerTitle = userRoles.isAdmin
     ? `Gestor - ${user.idUsuario}`

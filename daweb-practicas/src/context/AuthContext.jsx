@@ -11,9 +11,25 @@ export function AuthProvider({ children }) {
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
+  const userRoles = {
+    isAdmin:
+      user?.roles.includes("GESTOR_EVENTOS") &&
+      user?.roles.includes("PROPIETARIO_ESPACIOS"),
+    isUser: user?.roles.includes("USUARIO"),
+  };
+
   const handleLogin = (userData) => {
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
+
+    if (
+      userData.roles.includes("GESTOR_EVENTOS") &&
+      userData.roles.includes("PROPIETARIO_ESPACIOS")
+    ) {
+      navigate("/gestor");
+    } else {
+      navigate("/listado-eventos");
+    }
   };
 
   const handleLogout = async () => {
@@ -27,7 +43,9 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, handleLogin, handleLogout }}>
+    <AuthContext.Provider
+      value={{ user, userRoles, handleLogin, handleLogout }}
+    >
       {children}
     </AuthContext.Provider>
   );

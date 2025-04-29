@@ -35,13 +35,10 @@ function Login() {
           idUsuario: data.idUsuario,
           roles: data.roles,
         });
-
-        navigate("/gestor");
       } else {
         alert("Error al iniciar sesión.");
       }
     } catch (error) {
-      console.error("Error:", error);
       alert("Error de conexión");
     }
   };
