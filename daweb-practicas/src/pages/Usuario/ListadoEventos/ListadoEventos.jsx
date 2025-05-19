@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { API_ROUTES, fetchWithAuth } from "../../../api/api";
 import FiltrosEventos from "./FiltrosEventos";
 import EventoCard from "./EventoCard";
 import ModalReserva from "./ModalReserva";
+import { useToast } from "../../../context/ToastContext";
 import "./ListadoEventos.css";
 
 const ListadoEventos = () => {
@@ -18,16 +19,25 @@ const ListadoEventos = () => {
   });
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
   const [plazasReserva, setPlazasReserva] = useState(0);
+  const { showToast } = useToast();
 
   useEffect(() => {
     fetchEventos();
   }, [filtros]);
 
   const fetchEventos = async () => {
-    fetchWithAuth(API_ROUTES.EVENTOS_LISTADO)
-      .then((res) => res.json())
-      .then((data) => setEventos(data._embedded.eventoDTOList))
-      .catch((err) => alert("Error al cargar usuarios, err"));
+    try {
+      const res = await fetchWithAuth(API_ROUTES.EVENTOS_LISTADO);
+      if (!res.ok) {
+        const errorText = await res.json();
+        showToast(`Error: ${res.status} - ${errorText.message}`, "error");
+        return;
+      }
+      const data = await res.json();
+      setEventos(data._embedded.eventoDTOList);
+    } catch (err) {
+      showToast(`Error de red: ${err.message}`, "error");
+    }
   };
 
   const eventosFiltrados = eventos.filter((evento) => {
@@ -74,7 +84,6 @@ const ListadoEventos = () => {
 
   const handleReservar = (evento) => {
     setEventoSeleccionado(evento);
-    console.log(evento);
   };
 
   return (
@@ -95,6 +104,7 @@ const ListadoEventos = () => {
         evento={eventoSeleccionado}
         plazasReserva={plazasReserva}
         setPlazasReserva={setPlazasReserva}
+        fetchEventos={fetchEventos}
       />
     </div>
   );
