@@ -2,7 +2,7 @@ import "./Login.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaGithub, FaSignInAlt } from "react-icons/fa";
-import { API_ROUTES } from "../../config/apiConfig";
+import { API_ROUTES, fetchWithAuth } from "../../api/api";
 import { useAuth } from "../../context/AuthContext";
 
 function Login() {
@@ -19,13 +19,12 @@ function Login() {
       formData.append("username", username);
       formData.append("password", password);
 
-      const response = await fetch(API_ROUTES.LOGIN, {
+      const response = await fetchWithAuth(API_ROUTES.LOGIN, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
         body: formData.toString(),
-        credentials: "include",
       });
 
       const data = await response.json();

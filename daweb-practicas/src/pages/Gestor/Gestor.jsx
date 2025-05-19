@@ -9,7 +9,7 @@ import {
 } from "react-icons/fa";
 import Home from "./Home";
 import "./Gestor.css";
-import { API_ROUTES } from "../../config/apiConfig";
+import { API_ROUTES } from "../../api/api";
 import Header from "../../components/Header/Header";
 
 function Gestor() {

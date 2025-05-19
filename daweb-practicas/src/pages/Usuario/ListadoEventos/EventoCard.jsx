@@ -17,6 +17,10 @@ const EventoCard = ({ evento, onReservar }) => (
           <label className="card-label">Plazas:</label> {evento.plazas}
         </li>
         <li className="list-group-item">
+          <label className="card-label">Plazas Disponibles:</label>{" "}
+          {evento.plazasDisponibles}
+        </li>
+        <li className="list-group-item">
           <label className="card-label">Categoría:</label> {evento.categoria}
         </li>
         <li className="list-group-item">
@@ -45,8 +49,10 @@ const EventoCard = ({ evento, onReservar }) => (
       <div className="card-footer text-end">
         <button
           className="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#modalReservar"
           onClick={() => onReservar(evento)}
-          disabled={evento.cancelado || evento.plazas === 0}
+          disabled={evento.cancelado || evento.plazasDisponibles === 0}
         >
           Reservar
         </button>

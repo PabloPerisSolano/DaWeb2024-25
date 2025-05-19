@@ -22,7 +22,7 @@ const FiltrosEventos = ({ filtros, setFiltros }) => (
               setFiltros({ ...filtros, categoria: e.target.value })
             }
           >
-            <option value="">Todas las categorías</option>
+            <option value="">Categoría: Todas</option>
             <option value="ACADEMICO">Academico</option>
             <option value="CULTURAL">Cultural</option>
             <option value="ENTRETENIMIENTO">Entretenimiento</option>
@@ -43,7 +43,7 @@ const FiltrosEventos = ({ filtros, setFiltros }) => (
               })
             }
           >
-            <option value="">Activos y cancelados</option>
+            <option value="">Estado: Todos</option>
             <option value="false">Activos</option>
             <option value="true">Cancelados</option>
           </select>

@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { PrivateRoute } from "./components/PrivateRoute/PrivateRoute";
 import Layout from "./components/Layout/Layout";
 import Login from "./pages/Login/Login";
 import Gestor from "./pages/Gestor/Gestor";
@@ -12,7 +13,14 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/" element={<Layout />}>
+      <Route
+        path="/"
+        element={
+          <PrivateRoute>
+            <Layout />
+          </PrivateRoute>
+        }
+      >
         <Route path="gestor" element={<Gestor />} />
         <Route path="espacios" element={<Espacios />} />
         <Route path="eventos" element={<Eventos />} />

@@ -1,6 +1,6 @@
 import { createContext, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_ROUTES } from "../config/apiConfig";
+import { API_ROUTES, fetchWithAuth } from "../api/api";
 
 const AuthContext = createContext();
 
@@ -33,11 +33,7 @@ export function AuthProvider({ children }) {
   };
 
   const handleLogout = async () => {
-    const response = await fetch(API_ROUTES.LOGOUT, {
-      method: "POST",
-      credentials: "include",
-    });
-    setUser(null);
+    await fetchWithAuth(API_ROUTES.LOGOUT, { method: "POST" });
     localStorage.removeItem("user");
     navigate("/login");
   };
