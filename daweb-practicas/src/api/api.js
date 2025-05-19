@@ -6,9 +6,9 @@ export const API_ROUTES = {
   GITHUB_LOGIN: `oauth2/authorization/github`,
   LOGOUT: `auth/logout`,
   EVENTOS_LISTADO: `eventos?size=${MAX_ELEMENTS_PAGED}&sort=cancelado`,
-  EVENTOS_ID: `eventos`,
-  RESERVAS_CREAR: `reservas`,
+  EVENTOS: `eventos`,
   RESERVAS_MIAS: `reservas/me?size=${MAX_ELEMENTS_PAGED}&sort=idEvento`,
+  RESERVAS: `reservas`,
 };
 
 export const fetchWithAuth = (url, options = {}) => {

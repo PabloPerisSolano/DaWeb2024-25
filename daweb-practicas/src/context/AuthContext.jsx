@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
       userData.roles.includes("GESTOR_EVENTOS") &&
       userData.roles.includes("PROPIETARIO_ESPACIOS")
     ) {
-      navigate("/gestor");
+      navigate("/espacios");
     } else {
       navigate("/listado-eventos");
     }

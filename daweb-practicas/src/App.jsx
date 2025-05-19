@@ -2,7 +2,6 @@ import { Routes, Route } from "react-router-dom";
 import { PrivateRoute } from "./components/PrivateRoute/PrivateRoute";
 import Layout from "./components/Layout/Layout";
 import Login from "./pages/Login/Login";
-import Gestor from "./pages/Gestor/Gestor";
 import Espacios from "./pages/Gestor/Espacios/Espacios";
 import Eventos from "./pages/Gestor/Eventos/Eventos";
 import ListadoEventos from "./pages/Usuario/ListadoEventos/ListadoEventos";
@@ -20,7 +19,6 @@ function App() {
           </PrivateRoute>
         }
       >
-        <Route path="gestor" element={<Gestor />} />
         <Route path="espacios" element={<Espacios />} />
         <Route path="eventos" element={<Eventos />} />
         <Route path="listado-eventos" element={<ListadoEventos />} />

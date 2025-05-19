@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { API_ROUTES, fetchWithAuth } from "../../api/api";
 import { useToast } from "../../context/ToastContext";
+import { FaTimes, FaCheck } from "react-icons/fa";
 
 const ModalReserva = ({ evento, fetchEventos }) => {
   const { showToast } = useToast();
@@ -23,7 +24,7 @@ const ModalReserva = ({ evento, fetchEventos }) => {
     }
 
     try {
-      const res = await fetchWithAuth(API_ROUTES.RESERVAS_CREAR, {
+      const res = await fetchWithAuth(API_ROUTES.RESERVAS, {
         method: "POST",
         body: JSON.stringify({
           idEvento: evento.id,
@@ -83,17 +84,19 @@ const ModalReserva = ({ evento, fetchEventos }) => {
           <div className="modal-footer">
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn btn-secondary d-flex align-items-center gap-2 justify-content-center"
               data-bs-dismiss="modal"
             >
+              <FaTimes />
               Cancelar
             </button>
             <button
               type="button"
-              className="btn btn-primary"
+              className="btn btn-primary d-flex align-items-center gap-2 justify-content-center"
               data-bs-dismiss="modal"
               onClick={confirmarReserva}
             >
+              <FaCheck />
               Confirmar
             </button>
           </div>

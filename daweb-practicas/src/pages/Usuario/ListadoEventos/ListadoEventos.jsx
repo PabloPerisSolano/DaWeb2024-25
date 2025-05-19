@@ -102,7 +102,7 @@ const ListadoEventos = () => {
           <EventoCard
             key={evento.id}
             evento={evento}
-            onReservar={handleReservar}
+            onAccion={handleReservar}
           />
         ))}
       </div>

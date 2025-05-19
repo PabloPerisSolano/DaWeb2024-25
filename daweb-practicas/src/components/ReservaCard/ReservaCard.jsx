@@ -27,7 +27,7 @@ const ReservaCard = ({ reserva }) => {
     const fetchEvento = async () => {
       try {
         const res = await fetchWithAuth(
-          `${API_ROUTES.EVENTOS_ID}/${reserva.idEvento}`
+          `${API_ROUTES.EVENTOS}/${reserva.idEvento}`
         );
         const data = await res.json();
 

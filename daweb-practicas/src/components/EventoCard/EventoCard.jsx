@@ -1,4 +1,11 @@
-const EventoCard = ({ evento, onReservar }) => (
+import { FaPencilAlt, FaRegCalendarPlus } from "react-icons/fa";
+
+const EventoCard = ({
+  evento,
+  onAccion,
+  botonTexto = "Reservar",
+  modalTarget = "#modalReservar",
+}) => (
   <div className="col-md-6 my-2">
     <div className="card">
       <div className="card-header">
@@ -16,9 +23,19 @@ const EventoCard = ({ evento, onReservar }) => (
         <li className="list-group-item">
           <label className="card-label">Plazas:</label> {evento.plazas}
         </li>
+
         <li className="list-group-item">
-          <label className="card-label">Plazas Disponibles:</label>{" "}
-          {evento.plazasDisponibles}
+          {botonTexto === "Reservar" ? (
+            <>
+              <label className="card-label">Plazas Disponibles:</label>{" "}
+              {evento.plazasDisponibles}
+            </>
+          ) : (
+            <>
+              <label className="card-label">Plazas Reservadas:</label>{" "}
+              {evento.plazas - evento.plazasDisponibles}
+            </>
+          )}
         </li>
         <li className="list-group-item">
           <label className="card-label">Categoría:</label> {evento.categoria}
@@ -46,15 +63,17 @@ const EventoCard = ({ evento, onReservar }) => (
         )}
       </ul>
 
-      <div className="card-footer text-end">
+      <div className="card-footer d-flex justify-content-end">
         <button
-          className="btn btn-primary"
+          className="btn btn-primary d-flex align-items-center gap-2 justify-content-center"
           data-bs-toggle="modal"
-          data-bs-target="#modalReservar"
-          onClick={() => onReservar(evento)}
+          data-bs-target={modalTarget}
+          onClick={() => onAccion(evento)}
           disabled={evento.cancelado || evento.plazasDisponibles === 0}
         >
-          Reservar
+          {botonTexto === "Reservar" ? <FaRegCalendarPlus /> : null}
+          {botonTexto === "Modificar" ? <FaPencilAlt /> : null}
+          {botonTexto}
         </button>
       </div>
     </div>
