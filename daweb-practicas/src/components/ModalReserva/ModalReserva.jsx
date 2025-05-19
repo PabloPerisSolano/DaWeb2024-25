@@ -1,15 +1,27 @@
-import { API_ROUTES, fetchWithAuth } from "../../../api/api";
-import { useToast } from "../../../context/ToastContext";
+import { useState } from "react";
+import { API_ROUTES, fetchWithAuth } from "../../api/api";
+import { useToast } from "../../context/ToastContext";
 
-const ModalReserva = ({
-  evento,
-  plazasReserva,
-  setPlazasReserva,
-  fetchEventos,
-}) => {
+const ModalReserva = ({ evento, fetchEventos }) => {
   const { showToast } = useToast();
+  const [plazasReserva, setPlazasReserva] = useState(0);
 
   const confirmarReserva = async () => {
+    if (evento.plazasDisponibles < plazasReserva) {
+      showToast("No hay suficientes plazas disponibles", "error");
+      return;
+    }
+
+    if (plazasReserva <= 0) {
+      showToast("Debes reservar al menos una plaza", "error");
+      return;
+    }
+
+    if (new Date(evento.ocupacion.fechaFin) < new Date()) {
+      showToast("El evento ya ha finalizado", "error");
+      return;
+    }
+
     try {
       const res = await fetchWithAuth(API_ROUTES.RESERVAS_CREAR, {
         method: "POST",
@@ -80,9 +92,7 @@ const ModalReserva = ({
               type="button"
               className="btn btn-primary"
               data-bs-dismiss="modal"
-              onClick={() =>
-                confirmarReserva(evento, plazasReserva, fetchEventos)
-              }
+              onClick={confirmarReserva}
             >
               Confirmar
             </button>

@@ -6,8 +6,7 @@ import Gestor from "./pages/Gestor/Gestor";
 import Espacios from "./pages/Gestor/Espacios/Espacios";
 import Eventos from "./pages/Gestor/Eventos/Eventos";
 import ListadoEventos from "./pages/Usuario/ListadoEventos/ListadoEventos";
-import ReservasActivas from "./pages/Usuario/ReservasActivas/ReservasActivas";
-import ReservasPrevias from "./pages/Usuario/ReservasPrevias/ReservasPrevias";
+import MisReservas from "./pages/Usuario/MisReservas/MisReservas";
 
 function App() {
   return (
@@ -25,8 +24,7 @@ function App() {
         <Route path="espacios" element={<Espacios />} />
         <Route path="eventos" element={<Eventos />} />
         <Route path="listado-eventos" element={<ListadoEventos />} />
-        <Route path="reservas-activas" element={<ReservasActivas />} />
-        <Route path="reservas-previas" element={<ReservasPrevias />} />
+        <Route path="reservas" element={<MisReservas />} />
       </Route>
     </Routes>
   );

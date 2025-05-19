@@ -16,8 +16,7 @@ function Header() {
 
   const userLinks = [
     { name: "Ver Eventos", path: "/listado-eventos" },
-    { name: "Mis Reservas Activas", path: "/reservas-activas" },
-    { name: "Mis Reservas Previas", path: "/reservas-previas" },
+    { name: "Mis Reservas", path: "/reservas" },
   ];
 
   const headerTitle = userRoles.isAdmin

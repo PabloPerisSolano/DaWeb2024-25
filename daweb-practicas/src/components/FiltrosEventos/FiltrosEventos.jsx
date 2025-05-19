@@ -1,8 +1,12 @@
 const FiltrosEventos = ({ filtros, setFiltros }) => (
   <div className="card">
-    <div className="card-body">
+    <div className="card-body ">
+      <h5 className="card-title ">
+        <strong>Filtrar Eventos</strong>
+      </h5>
+      <hr className="my-3" />
       <form className="row g-3">
-        <section className="col-md-6">
+        <section className="col-md-5">
           <input
             type="text"
             className="form-control"
@@ -31,7 +35,7 @@ const FiltrosEventos = ({ filtros, setFiltros }) => (
           </select>
         </section>
 
-        <section className="col-7 col-md-2">
+        <section className="col-12 col-md-2">
           <select
             className="form-select"
             value={filtros.cancelado ?? ""}
@@ -49,9 +53,9 @@ const FiltrosEventos = ({ filtros, setFiltros }) => (
           </select>
         </section>
 
-        <section className="col-5 col-md-2">
+        <section className="col-12 col-md-3">
           <div className="input-group">
-            <span className="input-group-text">Plazas:</span>
+            <span className="input-group-text">Plazas Disponibles:</span>
             <input
               type="number"
               className="form-control"

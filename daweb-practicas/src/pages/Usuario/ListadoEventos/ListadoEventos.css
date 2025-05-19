@@ -1,3 +1,20 @@
+.eventos-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  color: #fff;
+  background-color: var(--color-background-secondary);
+  border-radius: 1.5rem;
+}
+
 .card-label {
   font-weight: 600;
+}
+
+@media (max-width: 576px) {
+  .eventos-page {
+    padding: 0px;
+    background-color: transparent;
+  }
 }

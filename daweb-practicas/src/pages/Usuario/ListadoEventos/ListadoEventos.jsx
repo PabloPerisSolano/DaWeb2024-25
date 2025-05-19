@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { API_ROUTES, fetchWithAuth } from "../../../api/api";
-import FiltrosEventos from "./FiltrosEventos";
-import EventoCard from "./EventoCard";
-import ModalReserva from "./ModalReserva";
+import FiltrosEventos from "../../../components/FiltrosEventos/FiltrosEventos";
+import EventoCard from "../../../components/EventoCard/EventoCard";
+import ModalReserva from "../../../components/ModalReserva/ModalReserva";
 import { useToast } from "../../../context/ToastContext";
+import { useAuth } from "../../../context/AuthContext";
 import "./ListadoEventos.css";
 
 const ListadoEventos = () => {
@@ -18,7 +19,7 @@ const ListadoEventos = () => {
     fechaFin: null,
   });
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
-  const [plazasReserva, setPlazasReserva] = useState(0);
+  const { handleLogout } = useAuth();
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -28,12 +29,18 @@ const ListadoEventos = () => {
   const fetchEventos = async () => {
     try {
       const res = await fetchWithAuth(API_ROUTES.EVENTOS_LISTADO);
+      const data = await res.json();
+
       if (!res.ok) {
-        const errorText = await res.json();
-        showToast(`Error: ${res.status} - ${errorText.message}`, "error");
+        if (res.status === 401) {
+          handleLogout();
+          return;
+        }
+
+        showToast(`Error: ${res.status} - ${data.message}`, "error");
         return;
       }
-      const data = await res.json();
+
       setEventos(data._embedded.eventoDTOList);
     } catch (err) {
       showToast(`Error de red: ${err.message}`, "error");
@@ -87,7 +94,7 @@ const ListadoEventos = () => {
   };
 
   return (
-    <div>
+    <div className="eventos-page">
       <FiltrosEventos filtros={filtros} setFiltros={setFiltros} />
 
       <div className="row mt-2">
@@ -100,12 +107,7 @@ const ListadoEventos = () => {
         ))}
       </div>
 
-      <ModalReserva
-        evento={eventoSeleccionado}
-        plazasReserva={plazasReserva}
-        setPlazasReserva={setPlazasReserva}
-        fetchEventos={fetchEventos}
-      />
+      <ModalReserva evento={eventoSeleccionado} fetchEventos={fetchEventos} />
     </div>
   );
 };

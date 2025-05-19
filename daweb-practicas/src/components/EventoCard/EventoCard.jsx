@@ -1,5 +1,5 @@
 const EventoCard = ({ evento, onReservar }) => (
-  <div className="col-md-4 my-2">
+  <div className="col-md-6 my-2">
     <div className="card">
       <div className="card-header">
         <h5>
