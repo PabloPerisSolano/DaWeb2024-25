@@ -1,75 +1,72 @@
-import React, { useState, useEffect } from "react";
-import { API_ROUTES } from "../../../api/api";
-import EspacioGestorCard from "./EspacioGestorCard";
-import ModalEditar from "./ModalEditar";
+import { useState, useEffect } from "react";
+import { useAuth } from "../../../context/AuthContext";
+import { useToast } from "../../../context/ToastContext";
+import { API_ROUTES, fetchWithAuth } from "../../../api/api";
+import { FaPlusCircle } from "react-icons/fa";
+import CardEspacio from "../../../components/CardEspacio/CardEspacio";
+import ModalNuevoEspacio from "../../../components/ModalNuevoEspacio/ModalNuevoEspacio";
+import "./Espacios.css";
 
 const ListadoEspacios = () => {
-    const [espacios, setEspacios] = useState([]);
-    const [showModalEditar, setShowModalEditar] = useState(false);
-    const [espacioSeleccionado, setEspacioSeleccionado] = useState(null);
+  const { handleLogout } = useAuth();
+  const { showToast } = useToast();
+  const [espacios, setEspacios] = useState([]);
 
-    useEffect(() => {
-        fetchEspacios();
-    }, []);
+  useEffect(() => {
+    fetchEspacios();
+  }, []);
 
-    const fetchEspacios = async () => {
-        const response = await fetch("URI", {
-            credentials: "include",
-        });
-        const data = await response.json();
-        setEspacios(data);
-    };
+  const fetchEspacios = async () => {
+    try {
+      const res = await fetchWithAuth(API_ROUTES.ESPACIOS);
+      const data = await res.json();
 
-    const handleEditar = (espacio) => {
-        setEspacioSeleccionado(espacio);
-        setShowModalEditar(true);
-    };
+      if (!res.ok) {
+        if (res.status === 401) {
+          handleLogout();
+          return;
+        }
 
-    const confirmarEdicion = async (datosActualizados) => {
-        await fetch("URI", {
-            method: "PATCH",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(datosActualizados),
-        });
-        setShowModalEditar(false);
-        fetchEspacios();
-    };
+        showToast(`Error: ${res.status} - ${data.message}`, "error");
+        return;
+      }
 
-    const cambiarEstadoEspacio = async (idEspacioFisico) => {
-            await fetch("URI", {
-                method: "PUT",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-    };
+      setEspacios(data);
+    } catch (err) {
+      showToast(`Error de red: ${err.message}`, "error");
+    }
+  };
 
-    return (
-        <div className="container">
-            <div className="row mt-4">
-                {espacios.map((espacio) => (
-                    <EspacioGestorCard
-                        key={espacio.id}
-                        espacio={espacio}
-                        onEditar={handleEditar}
-                    />
-                ))}
-            </div>
+  return (
+    <div className="espacios-page">
+      <section className="d-flex justify-content-between align-items-center">
+        <h2 className="bg-light rounded-4 p-2">
+          <strong>Espacios</strong>
+        </h2>
+        <button
+          type="button"
+          className="btn btn-primary d-flex align-items-center gap-2 justify-content-center"
+          data-bs-toggle="modal"
+          data-bs-target="#modalNuevoEspacio"
+        >
+          <FaPlusCircle />
+          Crear Espacio
+        </button>
+      </section>
 
-            {showModalEditar && (
-                <ModalEditar
-                    onHide={() => setShowModalEditar(false)}
-                    espacio={espacioSeleccionado}
-                    onConfirm={confirmarEdicion}
-                    onCambiarEstado={cambiarEstadoEspacio}
-                />
-            )}
-        </div>
-    );
+      <section className="row mt-2">
+        {espacios.map((espacio) => (
+          <CardEspacio
+            key={espacio.id}
+            espacio={espacio}
+            onConfirm={fetchEspacios}
+          />
+        ))}
+      </section>
+
+      <ModalNuevoEspacio id="modalNuevoEspacio" fetchEspacios={fetchEspacios} />
+    </div>
+  );
 };
 
 export default ListadoEspacios;

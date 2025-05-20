@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import { useToast } from "../../../context/ToastContext";
 import { API_ROUTES, fetchWithAuth } from "../../../api/api";
-import ReservaCard from "../../../components/ReservaCard/ReservaCard";
+import CardReserva from "../../../components/CardReserva/CardReserva";
 import "./MisReservas.css";
 
 const MisReservas = () => {
@@ -37,13 +37,13 @@ const MisReservas = () => {
 
   return (
     <div className="reservas-activas-page">
-      <h1>
+      <h2 className="bg-light rounded-4 p-2 d-inline-block">
         <strong>Mis Reservas</strong>
-      </h1>
+      </h2>
 
       <div className="row mt-2">
         {reservas.map((reserva) => (
-          <ReservaCard key={reserva.id} reserva={reserva} />
+          <CardReserva key={reserva.id} reserva={reserva} />
         ))}
       </div>
     </div>

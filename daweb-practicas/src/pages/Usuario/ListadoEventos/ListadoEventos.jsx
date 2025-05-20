@@ -3,7 +3,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { useToast } from "../../../context/ToastContext";
 import { API_ROUTES, fetchWithAuth } from "../../../api/api";
 import FiltrosEventos from "../../../components/FiltrosEventos/FiltrosEventos";
-import EventoCard from "../../../components/EventoCard/EventoCard";
+import CardEvento from "../../../components/CardEvento/CardEvento";
 
 import "./ListadoEventos.css";
 
@@ -94,10 +94,10 @@ const ListadoEventos = () => {
 
       <div className="row mt-2">
         {eventosFiltrados.map((evento) => (
-          <EventoCard
+          <CardEvento
             key={evento.id}
             evento={evento}
-            version="Reservar"
+            version="USUARIO"
             onConfirm={fetchEventos}
           />
         ))}

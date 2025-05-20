@@ -1,8 +1,34 @@
-import { FaPencilAlt, FaRegCalendarPlus } from "react-icons/fa";
+import { useToast } from "../../context/ToastContext";
+import { API_ROUTES, fetchWithAuth } from "../../api/api";
+import { FaPencilAlt, FaRegCalendarPlus, FaPowerOff } from "react-icons/fa";
 import ModalModificarEvento from "../ModalModificarEvento/ModalModificarEvento";
 import ModalReserva from "../ModalReserva/ModalReserva";
 
-const EventoCard = ({ evento, version, onConfirm }) => {
+const CardEvento = ({ evento, version, onConfirm }) => {
+  const { showToast } = useToast();
+
+  const cancelarEvento = async () => {
+    try {
+      const res = await fetchWithAuth(
+        `${API_ROUTES.EVENTOS}/${evento.id}/ocupacion`,
+        {
+          method: "PUT",
+        }
+      );
+
+      if (!res.ok) {
+        const errorJson = await res.json();
+        showToast(`Error: ${res.status} - ${errorJson.mensaje}`, "error");
+        return;
+      }
+
+      onConfirm();
+      showToast("Evento cancelado con éxito", "success");
+    } catch (err) {
+      showToast(`Error de red: ${err.message}`, "error");
+    }
+  };
+
   const getEstadoEvento = () => {
     if (evento.cancelado)
       return <span className="badge text-bg-danger">CANCELADO</span>;
@@ -42,7 +68,7 @@ const EventoCard = ({ evento, version, onConfirm }) => {
           </li>
 
           <li className="list-group-item">
-            {version === "Reservar" ? (
+            {version === "USUARIO" ? (
               <>
                 <label className="card-label">Plazas Disponibles:</label>{" "}
                 {evento.plazasDisponibles}
@@ -80,12 +106,31 @@ const EventoCard = ({ evento, version, onConfirm }) => {
           )}
         </ul>
 
-        <div className="card-footer d-flex justify-content-end">
+        <div
+          className={`card-footer d-flex ${
+            version === "GESTOR"
+              ? "justify-content-between"
+              : "justify-content-end"
+          }`}
+        >
+          {version === "GESTOR" ? (
+            <button
+              className="btn btn-danger d-flex align-items-center gap-2 justify-content-center"
+              disabled={
+                evento.cancelado ||
+                new Date(evento.ocupacion?.fechaInicio) < new Date()
+              }
+              onClick={() => cancelarEvento()}
+            >
+              <FaPowerOff />
+              Cancelar Evento
+            </button>
+          ) : null}
           <button
             className="btn btn-info d-flex align-items-center gap-2 justify-content-center"
             data-bs-toggle="modal"
             data-bs-target={
-              version === "Reservar"
+              version === "USUARIO"
                 ? `#modalReserva-${evento.id}`
                 : `#modalModificarEvento-${evento.id}`
             }
@@ -95,9 +140,9 @@ const EventoCard = ({ evento, version, onConfirm }) => {
               new Date(evento.ocupacion?.fechaInicio) < new Date()
             }
           >
-            {version === "Reservar" ? <FaRegCalendarPlus /> : null}
-            {version === "Modificar" ? <FaPencilAlt /> : null}
-            {version}
+            {version === "USUARIO" ? <FaRegCalendarPlus /> : null}
+            {version === "GESTOR" ? <FaPencilAlt /> : null}
+            {version === "USUARIO" ? "Reservar" : "Modificar"}
           </button>
         </div>
       </div>
@@ -120,4 +165,4 @@ const EventoCard = ({ evento, version, onConfirm }) => {
   );
 };
 
-export default EventoCard;
+export default CardEvento;

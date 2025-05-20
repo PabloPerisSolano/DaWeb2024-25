@@ -3,9 +3,9 @@ import { useAuth } from "../../../context/AuthContext";
 import { useToast } from "../../../context/ToastContext";
 import { API_ROUTES, fetchWithAuth } from "../../../api/api";
 import { FaPlusCircle } from "react-icons/fa";
-import EventoCard from "../../../components/EventoCard/EventoCard";
+import CardEvento from "../../../components/CardEvento/CardEvento";
 import ModalNuevoEvento from "../../../components/ModalNuevoEvento/ModalNuevoEvento";
-import "./Eventos.css";
+import "../../Usuario/ListadoEventos/ListadoEventos.css";
 
 const Eventos = () => {
   const { handleLogout } = useAuth();
@@ -40,9 +40,9 @@ const Eventos = () => {
   return (
     <div className="eventos-page">
       <section className="d-flex justify-content-between align-items-center">
-        <h1 className="text-white">
+        <h2 className="bg-light rounded-4 p-2">
           <strong>Eventos</strong>
-        </h1>
+        </h2>
         <button
           type="button"
           className="btn btn-primary d-flex align-items-center gap-2 justify-content-center"
@@ -56,10 +56,10 @@ const Eventos = () => {
 
       <section className="row mt-2">
         {eventos.map((evento) => (
-          <EventoCard
+          <CardEvento
             key={evento.id}
             evento={evento}
-            version="Modificar"
+            version="GESTOR"
             onConfirm={fetchEventos}
           />
         ))}

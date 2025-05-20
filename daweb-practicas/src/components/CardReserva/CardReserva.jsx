@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { API_ROUTES, fetchWithAuth } from "../../api/api";
 
-const ReservaCard = ({ reserva }) => {
+const CardReserva = ({ reserva }) => {
   const [evento, setEvento] = useState({});
 
   const getEstadoReserva = () => {
@@ -77,4 +77,4 @@ const ReservaCard = ({ reserva }) => {
   );
 };
 
-export default ReservaCard;
+export default CardReserva;
