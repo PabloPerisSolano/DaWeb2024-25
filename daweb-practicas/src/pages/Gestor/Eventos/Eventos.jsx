@@ -57,10 +57,12 @@ const Eventos = () => {
         ))}
       </div>
 
-      <ModalModificarEvento
-        evento={eventoSeleccionado}
-        fetchEventos={fetchEventos}
-      />
+      {eventoSeleccionado && (
+        <ModalModificarEvento
+          evento={eventoSeleccionado}
+          fetchEventos={fetchEventos}
+        />
+      )}
     </div>
   );
 };

@@ -1,25 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { API_ROUTES, fetchWithAuth } from "../../api/api";
 import { useToast } from "../../context/ToastContext";
 import { FaTimes, FaCheck } from "react-icons/fa";
 
 const ModalModificarEvento = ({ evento, fetchEventos }) => {
+  console.log("Evento a modificar:", evento);
   const { showToast } = useToast();
-  const [descripcion, setDescripcion] = useState(evento?.descripcion || "");
-  const [fechaInicio, setFechaInicio] = useState(
-    evento?.ocupacion?.fechaInicio
-      ? evento.ocupacion.fechaInicio.substring(0, 16)
-      : ""
-  );
-  const [fechaFin, setFechaFin] = useState(
-    evento?.ocupacion?.fechaFin
-      ? evento.ocupacion.fechaFin.substring(0, 16)
-      : ""
-  );
-  const [plazas, setPlazas] = useState(evento?.plazas || "");
-  const [idEspacioFisico, setIdEspacioFisico] = useState(
-    evento?.ocupacion?.espacioFisico?.id || ""
-  );
+  const [descripcion, setDescripcion] = useState("");
+  const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaFin, setFechaFin] = useState("");
+  const [plazas, setPlazas] = useState("");
+  const [idEspacioFisico, setIdEspacioFisico] = useState("");
+
+  useEffect(() => {
+    if (evento) {
+      setDescripcion(evento.descripcion || "");
+      setFechaInicio(
+        evento?.ocupacion?.fechaInicio
+          ? evento.ocupacion.fechaInicio.substring(0, 16)
+          : ""
+      );
+      setFechaFin(
+        evento?.ocupacion?.fechaFin
+          ? evento.ocupacion.fechaFin.substring(0, 16)
+          : ""
+      );
+      setPlazas(evento.plazas || "");
+      setIdEspacioFisico(evento?.ocupacion?.espacioFisico?.id || "");
+    }
+  }, [evento]);
 
   const confirmarModificacion = async () => {
     const patchData = {};
@@ -57,7 +66,7 @@ const ModalModificarEvento = ({ evento, fetchEventos }) => {
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Modificar evento</h5>
+            <h5 className="modal-title">Modificar - {evento.nombre}</h5>
             <button
               type="button"
               className="btn-close"
