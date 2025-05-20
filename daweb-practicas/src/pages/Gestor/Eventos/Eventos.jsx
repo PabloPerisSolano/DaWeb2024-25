@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
-import { API_ROUTES, fetchWithAuth } from "../../../api/api";
-import { useToast } from "../../../context/ToastContext";
 import { useAuth } from "../../../context/AuthContext";
+import { useToast } from "../../../context/ToastContext";
+import { API_ROUTES, fetchWithAuth } from "../../../api/api";
 import EventoCard from "../../../components/EventoCard/EventoCard";
-import ModalModificarEvento from "../../../components/ModalModificarEvento/ModalModificarEvento";
 import "./Eventos.css";
 
 const Eventos = () => {
+  const { handleLogout } = useAuth();
+  const { showToast } = useToast();
   const [eventos, setEventos] = useState([]);
-  const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
 
   useEffect(() => {
     fetchEventos();
@@ -35,10 +35,6 @@ const Eventos = () => {
     }
   };
 
-  const handleModificar = (evento) => {
-    setEventoSeleccionado(evento);
-  };
-
   return (
     <div className="eventos-page">
       <h1 className="text-white">
@@ -50,19 +46,11 @@ const Eventos = () => {
           <EventoCard
             key={evento.id}
             evento={evento}
-            onAccion={handleModificar}
-            botonTexto="Modificar"
-            modalTarget="#modalModificarEvento"
+            version="Modificar"
+            onConfirm={fetchEventos}
           />
         ))}
       </div>
-
-      {eventoSeleccionado && (
-        <ModalModificarEvento
-          evento={eventoSeleccionado}
-          fetchEventos={fetchEventos}
-        />
-      )}
     </div>
   );
 };

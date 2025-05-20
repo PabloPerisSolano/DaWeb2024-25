@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../../../context/AuthContext";
+import { useToast } from "../../../context/ToastContext";
 import { API_ROUTES, fetchWithAuth } from "../../../api/api";
 import FiltrosEventos from "../../../components/FiltrosEventos/FiltrosEventos";
 import EventoCard from "../../../components/EventoCard/EventoCard";
-import ModalReserva from "../../../components/ModalReserva/ModalReserva";
-import { useToast } from "../../../context/ToastContext";
-import { useAuth } from "../../../context/AuthContext";
+
 import "./ListadoEventos.css";
 
 const ListadoEventos = () => {
+  const { handleLogout } = useAuth();
+  const { showToast } = useToast();
   const [eventos, setEventos] = useState([]);
   const [filtros, setFiltros] = useState({
     busquedaGeneral: "",
@@ -18,9 +20,6 @@ const ListadoEventos = () => {
     fechaInicio: null,
     fechaFin: null,
   });
-  const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
-  const { handleLogout } = useAuth();
-  const { showToast } = useToast();
 
   useEffect(() => {
     fetchEventos();
@@ -89,10 +88,6 @@ const ListadoEventos = () => {
     );
   });
 
-  const handleReservar = (evento) => {
-    setEventoSeleccionado(evento);
-  };
-
   return (
     <div className="eventos-page">
       <FiltrosEventos filtros={filtros} setFiltros={setFiltros} />
@@ -102,12 +97,11 @@ const ListadoEventos = () => {
           <EventoCard
             key={evento.id}
             evento={evento}
-            onAccion={handleReservar}
+            version="Reservar"
+            onConfirm={fetchEventos}
           />
         ))}
       </div>
-
-      <ModalReserva evento={eventoSeleccionado} fetchEventos={fetchEventos} />
     </div>
   );
 };

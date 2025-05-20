@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { API_ROUTES, fetchWithAuth } from "../../../api/api";
-import { useToast } from "../../../context/ToastContext";
 import { useAuth } from "../../../context/AuthContext";
+import { useToast } from "../../../context/ToastContext";
+import { API_ROUTES, fetchWithAuth } from "../../../api/api";
 import ReservaCard from "../../../components/ReservaCard/ReservaCard";
 import "./MisReservas.css";
 
 const MisReservas = () => {
-  const [reservas, setReservas] = useState([]);
-  const { showToast } = useToast();
   const { handleLogout } = useAuth();
+  const { showToast } = useToast();
+  const [reservas, setReservas] = useState([]);
 
   useEffect(() => {
     fetchMisReservas();

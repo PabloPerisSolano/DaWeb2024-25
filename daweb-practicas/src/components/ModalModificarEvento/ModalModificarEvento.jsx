@@ -3,54 +3,50 @@ import { API_ROUTES, fetchWithAuth } from "../../api/api";
 import { useToast } from "../../context/ToastContext";
 import { FaTimes, FaCheck } from "react-icons/fa";
 
-const ModalModificarEvento = ({ evento, fetchEventos }) => {
-  console.log("Evento a modificar:", evento);
+const ModalModificarEvento = ({ id, evento, fetchEventos }) => {
   const { showToast } = useToast();
-  const [descripcion, setDescripcion] = useState("");
-  const [fechaInicio, setFechaInicio] = useState("");
-  const [fechaFin, setFechaFin] = useState("");
-  const [plazas, setPlazas] = useState("");
-  const [idEspacioFisico, setIdEspacioFisico] = useState("");
+  const [descripcion, setDescripcion] = useState(evento.descripcion || "");
+  const [fechaInicio, setFechaInicio] = useState(
+    evento.ocupacion.fechaInicio.substring(0, 16) || ""
+  );
+  const [fechaFin, setFechaFin] = useState(
+    evento.ocupacion.fechaFin.substring(0, 16) || ""
+  );
+  const [plazas, setPlazas] = useState(evento.plazas || "");
+  const [idEspacioFisico, setIdEspacioFisico] = useState(
+    evento.ocupacion.espacioFisico.id || ""
+  );
+  const [espacios, setEspacios] = useState([]);
 
   useEffect(() => {
-    if (evento) {
-      setDescripcion(evento.descripcion || "");
-      setFechaInicio(
-        evento?.ocupacion?.fechaInicio
-          ? evento.ocupacion.fechaInicio.substring(0, 16)
-          : ""
-      );
-      setFechaFin(
-        evento?.ocupacion?.fechaFin
-          ? evento.ocupacion.fechaFin.substring(0, 16)
-          : ""
-      );
-      setPlazas(evento.plazas || "");
-      setIdEspacioFisico(evento?.ocupacion?.espacioFisico?.id || "");
-    }
-  }, [evento]);
+    const fetchEspacios = async () => {
+      try {
+        const res = await fetchWithAuth(API_ROUTES.ESPACIOS);
+        const data = await res.json();
+        setEspacios(data || []);
+      } catch (err) {
+        showToast("No se pudieron cargar los espacios físicos", "error");
+      }
+    };
+    fetchEspacios();
+  }, []);
 
   const confirmarModificacion = async () => {
-    const patchData = {};
-    if (descripcion !== "") patchData.descripcion = descripcion;
-    if (fechaInicio !== "") patchData.fechaInicio = fechaInicio;
-    if (fechaFin !== "") patchData.fechaFin = fechaFin;
-    if (plazas !== "") patchData.plazas = plazas;
-    if (idEspacioFisico !== "") patchData.idEspacioFisico = idEspacioFisico;
-
     try {
       const res = await fetchWithAuth(`${API_ROUTES.EVENTOS}/${evento.id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(patchData),
+        body: JSON.stringify({
+          descripcion,
+          fechaInicio,
+          fechaFin,
+          plazas,
+          idEspacioFisico,
+        }),
       });
 
       if (!res.ok) {
         const errorText = await res.json();
-        showToast(
-          `Error: ${res.status} - ${errorText.mensaje || errorText.message}`,
-          "error"
-        );
+        showToast(`Error: ${res.status} - ${errorText.mensaje}`, "error");
         return;
       }
 
@@ -62,8 +58,8 @@ const ModalModificarEvento = ({ evento, fetchEventos }) => {
   };
 
   return (
-    <div className="modal fade" id="modalModificarEvento">
-      <div className="modal-dialog modal-dialog-centered">
+    <div className="modal fade" id={id} tabIndex="-1">
+      <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Modificar - {evento.nombre}</h5>
@@ -107,19 +103,26 @@ const ModalModificarEvento = ({ evento, fetchEventos }) => {
                 <input
                   type="number"
                   className="form-control"
-                  min="1"
+                  min={evento.plazas - evento.plazasDisponibles}
+                  max={evento.ocupacion.espacioFisico.capacidad}
                   value={plazas}
                   onChange={(e) => setPlazas(parseInt(e.target.value))}
                 />
               </div>
               <div className="mb-3">
                 <label className="form-label">ID Espacio Físico</label>
-                <input
-                  type="text"
-                  className="form-control"
+
+                <select
+                  className="form-select"
                   value={idEspacioFisico}
                   onChange={(e) => setIdEspacioFisico(e.target.value)}
-                />
+                >
+                  {espacios.map((espacio) => (
+                    <option key={espacio.id} value={espacio.id}>
+                      {espacio.nombre} - Capacidad: {espacio.capacidad}
+                    </option>
+                  ))}
+                </select>
               </div>
             </form>
           </div>

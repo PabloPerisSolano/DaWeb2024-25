@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { API_ROUTES, fetchWithAuth } from "../../api/api";
 import { useToast } from "../../context/ToastContext";
+import { API_ROUTES, fetchWithAuth } from "../../api/api";
 import { FaTimes, FaCheck } from "react-icons/fa";
 
-const ModalReserva = ({ evento, fetchEventos }) => {
+const ModalReserva = ({ id, evento, fetchEventos }) => {
   const { showToast } = useToast();
   const [plazasReserva, setPlazasReserva] = useState(0);
 
@@ -53,7 +53,7 @@ const ModalReserva = ({ evento, fetchEventos }) => {
   };
 
   return (
-    <div className="modal fade" id="modalReservar">
+    <div className="modal fade" id={id} tabIndex="-1" aria-hidden="true">
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">

@@ -1,11 +1,8 @@
 import { FaPencilAlt, FaRegCalendarPlus } from "react-icons/fa";
+import ModalModificarEvento from "../ModalModificarEvento/ModalModificarEvento";
+import ModalReserva from "../ModalReserva/ModalReserva";
 
-const EventoCard = ({
-  evento,
-  onAccion,
-  botonTexto = "Reservar",
-  modalTarget = "#modalReservar",
-}) => {
+const EventoCard = ({ evento, version, onConfirm }) => {
   const getEstadoEvento = () => {
     if (evento.cancelado)
       return <span className="badge text-bg-danger">CANCELADO</span>;
@@ -45,7 +42,7 @@ const EventoCard = ({
           </li>
 
           <li className="list-group-item">
-            {botonTexto === "Reservar" ? (
+            {version === "Reservar" ? (
               <>
                 <label className="card-label">Plazas Disponibles:</label>{" "}
                 {evento.plazasDisponibles}
@@ -76,7 +73,8 @@ const EventoCard = ({
               <li className="list-group-item">
                 <label className="card-label">Espacio:</label>{" "}
                 {evento.ocupacion.espacioFisico.nombre} -{" "}
-                {evento.ocupacion.espacioFisico.direccion}
+                {evento.ocupacion.espacioFisico.direccion} - Capacidad:{" "}
+                {evento.ocupacion.espacioFisico.capacidad}
               </li>
             </>
           )}
@@ -86,20 +84,38 @@ const EventoCard = ({
           <button
             className="btn btn-primary d-flex align-items-center gap-2 justify-content-center"
             data-bs-toggle="modal"
-            data-bs-target={modalTarget}
-            onClick={() => onAccion(evento)}
+            data-bs-target={
+              version === "Reservar"
+                ? `#modalReserva-${evento.id}`
+                : `#modalModificarEvento-${evento.id}`
+            }
             disabled={
               evento.cancelado ||
               evento.plazasDisponibles === 0 ||
               new Date(evento.ocupacion?.fechaInicio) < new Date()
             }
           >
-            {botonTexto === "Reservar" ? <FaRegCalendarPlus /> : null}
-            {botonTexto === "Modificar" ? <FaPencilAlt /> : null}
-            {botonTexto}
+            {version === "Reservar" ? <FaRegCalendarPlus /> : null}
+            {version === "Modificar" ? <FaPencilAlt /> : null}
+            {version}
           </button>
         </div>
       </div>
+
+      {!evento.cancelado && (
+        <>
+          <ModalModificarEvento
+            id={`modalModificarEvento-${evento.id}`}
+            evento={evento}
+            fetchEventos={onConfirm}
+          />
+          <ModalReserva
+            id={`modalReserva-${evento.id}`}
+            evento={evento}
+            fetchEventos={onConfirm}
+          />
+        </>
+      )}
     </div>
   );
 };
