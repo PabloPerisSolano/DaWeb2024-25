@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import { useToast } from "../../../context/ToastContext";
 import { API_ROUTES, fetchWithAuth } from "../../../api/api";
+import { FaPlusCircle } from "react-icons/fa";
 import EventoCard from "../../../components/EventoCard/EventoCard";
+import ModalNuevoEvento from "../../../components/ModalNuevoEvento/ModalNuevoEvento";
 import "./Eventos.css";
 
 const Eventos = () => {
@@ -37,11 +39,22 @@ const Eventos = () => {
 
   return (
     <div className="eventos-page">
-      <h1 className="text-white">
-        <strong>Eventos del sistema</strong>
-      </h1>
+      <section className="d-flex justify-content-between align-items-center">
+        <h1 className="text-white">
+          <strong>Eventos</strong>
+        </h1>
+        <button
+          type="button"
+          className="btn btn-primary d-flex align-items-center gap-2 justify-content-center"
+          data-bs-toggle="modal"
+          data-bs-target="#modalNuevoEvento"
+        >
+          <FaPlusCircle />
+          Crear Reserva
+        </button>
+      </section>
 
-      <div className="row mt-2">
+      <section className="row mt-2">
         {eventos.map((evento) => (
           <EventoCard
             key={evento.id}
@@ -50,7 +63,9 @@ const Eventos = () => {
             onConfirm={fetchEventos}
           />
         ))}
-      </div>
+      </section>
+
+      <ModalNuevoEvento id="modalNuevoEvento" fetchEventos={fetchEventos} />
     </div>
   );
 };

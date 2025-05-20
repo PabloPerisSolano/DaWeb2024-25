@@ -82,7 +82,7 @@ const EventoCard = ({ evento, version, onConfirm }) => {
 
         <div className="card-footer d-flex justify-content-end">
           <button
-            className="btn btn-primary d-flex align-items-center gap-2 justify-content-center"
+            className="btn btn-info d-flex align-items-center gap-2 justify-content-center"
             data-bs-toggle="modal"
             data-bs-target={
               version === "Reservar"
