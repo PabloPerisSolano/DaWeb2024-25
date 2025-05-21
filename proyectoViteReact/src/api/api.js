@@ -3,7 +3,7 @@ const MAX_ELEMENTS_PAGED = 2000;
 
 export const API_ROUTES = {
   LOGIN: `auth/login`,
-  GITHUB_LOGIN: `oauth2/authorization/github`,
+  GITHUB_LOGIN: `${API_BASE}oauth2/authorization/github`,
   LOGOUT: `auth/logout`,
   ESPACIOS: `espacios`,
   EVENTOS_LISTADO: `eventos?size=${MAX_ELEMENTS_PAGED}&sort=cancelado`,

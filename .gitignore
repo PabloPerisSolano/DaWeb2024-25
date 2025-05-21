@@ -26,7 +26,7 @@ dist-ssr/
 .cache/
 
 # Binarios
-bin/
+#bin/
 obj/
 
 # Configuración de usuario

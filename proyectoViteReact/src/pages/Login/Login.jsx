@@ -1,15 +1,15 @@
 import "./Login.css";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useToast } from "../../context/ToastContext";
 import { FaGithub, FaSignInAlt } from "react-icons/fa";
 import { API_ROUTES, fetchWithAuth } from "../../api/api";
 import { useAuth } from "../../context/AuthContext";
 
 function Login() {
+  const { handleLogin } = useAuth();
+  const { showToast } = useToast();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
-  const { handleLogin } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,10 +35,10 @@ function Login() {
           roles: data.roles,
         });
       } else {
-        alert("Error al iniciar sesión.");
+        showToast(`Error: ${response.status} - ${data.error}`, "error");
       }
     } catch (error) {
-      alert("Error de conexión");
+      showToast("Error de conexión", "error");
     }
   };
 
@@ -52,19 +52,20 @@ function Login() {
 
     // Escucha los mensajes de la ventana emergente
     const messageListener = (event) => {
-      // Verifica el origen del mensaje por seguridad
       if (event.origin !== "http://localhost:8090") return;
 
-      if (event.data.token) {
-        // Guarda el token y redirige
-        navigate("/gestor");
-        popup.close();
-        window.removeEventListener("message", messageListener);
-      } else if (event.data.error) {
-        alert(event.data.error);
-        popup.close();
-        window.removeEventListener("message", messageListener);
+      if (event.data?.token) {
+        handleLogin({
+          idUsuario: event.data.idUsuario,
+          roles: event.data.roles,
+        });
+
+        if (popup) popup.close();
+      } else if (event.data?.error) {
+        showToast(event.data.error, "error");
+        if (popup) popup.close();
       }
+      window.removeEventListener("message", messageListener);
     };
 
     window.addEventListener("message", messageListener);
