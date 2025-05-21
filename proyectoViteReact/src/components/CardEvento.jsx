@@ -1,10 +1,10 @@
-import { useToast } from "../../context/ToastContext";
-import { API_ROUTES, fetchWithAuth } from "../../api/api";
+import { useToast } from "@/context/ToastContext";
+import { API_ROUTES, fetchWithAuth } from "@/api/api";
 import { FaPencilAlt, FaRegCalendarPlus, FaPowerOff } from "react-icons/fa";
-import ModalModificarEvento from "../ModalModificarEvento/ModalModificarEvento";
-import ModalReserva from "../ModalReserva/ModalReserva";
+import ModalModificarEvento from "@/components/ModalModificarEvento";
+import ModalReserva from "@/components/ModalReserva";
 
-const CardEvento = ({ evento, version, onConfirm }) => {
+const CardEvento = ({ evento, version, fetchItems }) => {
   const { showToast } = useToast();
 
   const cancelarEvento = async () => {
@@ -22,7 +22,7 @@ const CardEvento = ({ evento, version, onConfirm }) => {
         return;
       }
 
-      onConfirm();
+      fetchItems();
       showToast("Evento cancelado con éxito", "success");
     } catch (err) {
       showToast(`Error de red: ${err.message}`, "error");
@@ -152,12 +152,12 @@ const CardEvento = ({ evento, version, onConfirm }) => {
           <ModalModificarEvento
             id={`modalModificarEvento-${evento.id}`}
             evento={evento}
-            fetchEventos={onConfirm}
+            fetchItems={fetchItems}
           />
           <ModalReserva
             id={`modalReserva-${evento.id}`}
             evento={evento}
-            fetchEventos={onConfirm}
+            fetchItems={fetchItems}
           />
         </>
       )}

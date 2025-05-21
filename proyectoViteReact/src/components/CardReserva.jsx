@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { API_ROUTES, fetchWithAuth } from "../../api/api";
+import { API_ROUTES, fetchWithAuth } from "@/api/api";
 
 const CardReserva = ({ reserva }) => {
   const [evento, setEvento] = useState({});

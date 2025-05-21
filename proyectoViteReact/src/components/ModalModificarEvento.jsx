@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { API_ROUTES, fetchWithAuth } from "../../api/api";
-import { useToast } from "../../context/ToastContext";
+import { API_ROUTES, fetchWithAuth } from "@/api/api";
+import { useToast } from "@/context/ToastContext";
 import { FaTimes, FaCheck } from "react-icons/fa";
 
-const ModalModificarEvento = ({ id, evento, fetchEventos }) => {
+const ModalModificarEvento = ({ id, evento, fetchItems }) => {
   const { showToast } = useToast();
   const [descripcion, setDescripcion] = useState(evento.descripcion || "");
   const [fechaInicio, setFechaInicio] = useState(
@@ -50,7 +50,7 @@ const ModalModificarEvento = ({ id, evento, fetchEventos }) => {
         return;
       }
 
-      fetchEventos();
+      fetchItems();
       showToast("Evento modificado con éxito", "success");
     } catch (err) {
       showToast(`Error de red: ${err.message}`, "error");

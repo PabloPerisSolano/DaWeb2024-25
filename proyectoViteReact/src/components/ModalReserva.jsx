@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useToast } from "../../context/ToastContext";
-import { API_ROUTES, fetchWithAuth } from "../../api/api";
+import { useToast } from "@/context/ToastContext";
+import { API_ROUTES, fetchWithAuth } from "@/api/api";
 import { FaTimes, FaCheck } from "react-icons/fa";
 
-const ModalReserva = ({ id, evento, fetchEventos }) => {
+const ModalReserva = ({ id, evento, fetchItems }) => {
   const { showToast } = useToast();
   const [plazasReserva, setPlazasReserva] = useState(0);
 
@@ -45,8 +45,11 @@ const ModalReserva = ({ id, evento, fetchEventos }) => {
         return;
       }
 
-      fetchEventos();
-      showToast("Reserva realizada con éxito", "success");
+      // Esperar para actualizar las plazas disponibles del evento
+      setTimeout(() => {
+        fetchItems();
+        showToast("Reserva realizada con éxito", "success");
+      }, 1000);
     } catch (err) {
       showToast(`Error de red: ${err.message}`, "error");
     }

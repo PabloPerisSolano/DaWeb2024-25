@@ -6,7 +6,7 @@ export const API_ROUTES = {
   GITHUB_LOGIN: `${API_BASE}oauth2/authorization/github`,
   LOGOUT: `auth/logout`,
   ESPACIOS: `espacios`,
-  EVENTOS_LISTADO: `eventos?size=${MAX_ELEMENTS_PAGED}&sort=cancelado`,
+  EVENTOS_LISTADO: `eventos?size=${MAX_ELEMENTS_PAGED}`,
   EVENTOS: `eventos`,
   RESERVAS_MIAS: `reservas/me?size=${MAX_ELEMENTS_PAGED}&sort=idEvento`,
   RESERVAS: `reservas`,

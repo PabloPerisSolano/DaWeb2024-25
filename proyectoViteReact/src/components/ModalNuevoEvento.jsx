@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { API_ROUTES, fetchWithAuth } from "../../api/api";
-import { useToast } from "../../context/ToastContext";
+import { API_ROUTES, fetchWithAuth } from "@/api/api";
+import { useToast } from "@/context/ToastContext";
 import { FaTimes, FaCheck } from "react-icons/fa";
 
-const ModalModificarEvento = ({ id, fetchEventos }) => {
+const ModalModificarEvento = ({ id, fetchItems }) => {
   const { showToast } = useToast();
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
@@ -56,7 +56,7 @@ const ModalModificarEvento = ({ id, fetchEventos }) => {
         return;
       }
 
-      fetchEventos();
+      fetchItems();
       showToast("Evento modificado con éxito", "success");
       setNombre("");
       setDescripcion("");

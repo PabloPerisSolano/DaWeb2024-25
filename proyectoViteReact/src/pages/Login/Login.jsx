@@ -1,9 +1,9 @@
 import "./Login.css";
 import { useState } from "react";
-import { useToast } from "../../context/ToastContext";
+import { useToast } from "@/context/ToastContext";
 import { FaGithub, FaSignInAlt } from "react-icons/fa";
-import { API_ROUTES, fetchWithAuth } from "../../api/api";
-import { useAuth } from "../../context/AuthContext";
+import { API_ROUTES, fetchWithAuth } from "@/api/api";
+import { useAuth } from "@/context/AuthContext";
 
 function Login() {
   const { handleLogin } = useAuth();

@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../../../context/AuthContext";
-import { useToast } from "../../../context/ToastContext";
-import { API_ROUTES, fetchWithAuth } from "../../../api/api";
-import FiltrosEventos from "../../../components/FiltrosEventos/FiltrosEventos";
-import CardEvento from "../../../components/CardEvento/CardEvento";
-
-import "./ListadoEventos.css";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/context/ToastContext";
+import { API_ROUTES, fetchWithAuth } from "@/api/api";
+import FiltrosEventos from "@/components/FiltrosEventos";
+import CardEvento from "@/components/CardEvento";
 
 const ListadoEventos = () => {
   const { handleLogout } = useAuth();
   const { showToast } = useToast();
+  const [loading, setLoading] = useState(true);
   const [eventos, setEventos] = useState([]);
   const [filtros, setFiltros] = useState({
     busquedaGeneral: "",
@@ -26,6 +25,7 @@ const ListadoEventos = () => {
   }, [filtros]);
 
   const fetchEventos = async () => {
+    setLoading(true);
     try {
       const res = await fetchWithAuth(API_ROUTES.EVENTOS_LISTADO);
       const data = await res.json();
@@ -43,6 +43,8 @@ const ListadoEventos = () => {
       setEventos(data._embedded.eventoDTOList);
     } catch (err) {
       showToast(`Error de red: ${err.message}`, "error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -89,18 +91,24 @@ const ListadoEventos = () => {
   });
 
   return (
-    <div className="eventos-page">
+    <div className="page">
       <FiltrosEventos filtros={filtros} setFiltros={setFiltros} />
 
       <div className="row mt-2">
-        {eventosFiltrados.map((evento) => (
-          <CardEvento
-            key={evento.id}
-            evento={evento}
-            version="USUARIO"
-            onConfirm={fetchEventos}
-          />
-        ))}
+        {loading ? (
+          <div className="text-center text-light">
+            <div className="spinner-border" role="status" />
+          </div>
+        ) : (
+          eventosFiltrados.map((evento) => (
+            <CardEvento
+              key={evento.id}
+              evento={evento}
+              version="USUARIO"
+              fetchItems={fetchEventos}
+            />
+          ))
+        )}
       </div>
     </div>
   );

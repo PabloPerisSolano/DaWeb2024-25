@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
-import { useAuth } from "../../context/AuthContext";
-import NavMenu from "./NavMenu";
+import { useAuth } from "@/context/AuthContext";
 import { FaSignOutAlt, FaBars, FaUser } from "react-icons/fa";
+import NavMenu from "./NavMenu";
 import "./Header.css";
 
 function Header() {
@@ -10,7 +10,7 @@ function Header() {
   if (!user) return null;
 
   const adminLinks = [
-    { name: "Gestionar Espacios Físicos", path: "/espacios" },
+    { name: "Gestionar Espacios", path: "/espacios" },
     { name: "Gestionar Eventos", path: "/eventos" },
   ];
 

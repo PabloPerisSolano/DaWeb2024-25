@@ -29,6 +29,10 @@
     display: block;
   }
 
+  .dropdown-menu {
+    width: 170px;
+  }
+
   .main-nav {
     display: none;
   }

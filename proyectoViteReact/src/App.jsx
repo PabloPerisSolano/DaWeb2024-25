@@ -1,11 +1,11 @@
 import { Routes, Route } from "react-router-dom";
-import { PrivateRoute } from "./components/PrivateRoute/PrivateRoute";
-import Layout from "./components/Layout/Layout";
-import Login from "./pages/Login/Login";
-import Espacios from "./pages/Gestor/Espacios/Espacios";
-import Eventos from "./pages/Gestor/Eventos/Eventos";
-import ListadoEventos from "./pages/Usuario/ListadoEventos/ListadoEventos";
-import MisReservas from "./pages/Usuario/MisReservas/MisReservas";
+import { PrivateRoute } from "@/components/PrivateRoute";
+import Layout from "@/components/Layout/Layout";
+import Login from "@/pages/Login/Login";
+import Espacios from "@/pages/Gestor/Espacios";
+import Eventos from "@/pages/Gestor/Eventos";
+import ListadoEventos from "@/pages/Usuario/ListadoEventos";
+import MisReservas from "@/pages/Usuario/MisReservas";
 
 function App() {
   return (

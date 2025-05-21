@@ -1,9 +1,9 @@
-import { useToast } from "../../context/ToastContext";
-import { API_ROUTES, fetchWithAuth } from "../../api/api";
+import { useToast } from "@/context/ToastContext";
+import { API_ROUTES, fetchWithAuth } from "@/api/api";
 import { FaPencilAlt, FaPowerOff } from "react-icons/fa";
-import ModalModificarEspacio from "../ModalModificarEspacio/ModalModificarEspacio";
+import ModalModificarEspacio from "@/components/ModalModificarEspacio";
 
-const EspacioGestorCard = ({ espacio, onConfirm }) => {
+const CardEspacio = ({ espacio, fetchItems }) => {
   const { showToast } = useToast();
 
   const cambiarEstado = async () => {
@@ -21,7 +21,7 @@ const EspacioGestorCard = ({ espacio, onConfirm }) => {
         return;
       }
 
-      onConfirm();
+      fetchItems();
       showToast("Estado modificado con éxito", "success");
     } catch (err) {
       showToast(`Error de red: ${err.message}`, "error");
@@ -77,7 +77,6 @@ const EspacioGestorCard = ({ espacio, onConfirm }) => {
             className="btn btn-info d-flex align-items-center gap-2 justify-content-center"
             data-bs-toggle="modal"
             data-bs-target={`#modalModificarEspacio-${espacio.id}`}
-            onClick={() => onConfirm(espacio)}
           >
             <FaPencilAlt />
             Modificar
@@ -88,10 +87,10 @@ const EspacioGestorCard = ({ espacio, onConfirm }) => {
       <ModalModificarEspacio
         id={`modalModificarEspacio-${espacio.id}`}
         espacio={espacio}
-        fetchEspacios={onConfirm}
+        fetchItems={fetchItems}
       />
     </div>
   );
 };
 
-export default EspacioGestorCard;
+export default CardEspacio;

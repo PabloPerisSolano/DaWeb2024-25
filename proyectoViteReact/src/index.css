@@ -16,3 +16,20 @@
 body {
   background-image: linear-gradient(to bottom right, violet, purple);
 }
+
+.page {
+  padding: 20px;
+  background-color: var(--color-background-secondary);
+  border-radius: 1.5rem;
+}
+
+.card-label {
+  font-weight: 600;
+}
+
+@media (max-width: 576px) {
+  .page {
+    padding: 0px;
+    background-color: transparent;
+  }
+}

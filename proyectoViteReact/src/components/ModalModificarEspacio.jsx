@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { API_ROUTES, fetchWithAuth } from "../../api/api";
-import { useToast } from "../../context/ToastContext";
+import { API_ROUTES, fetchWithAuth } from "@/api/api";
+import { useToast } from "@/context/ToastContext";
 import { FaTimes, FaCheck } from "react-icons/fa";
 
-const ModalModificarEspacio = ({ id, espacio, fetchEspacios }) => {
+const ModalModificarEspacio = ({ id, espacio, fetchItems }) => {
   const { showToast } = useToast();
   const [nombre, setNombre] = useState(espacio.nombre || "");
   const [descripcion, setDescripcion] = useState(espacio.descripcion || "");
@@ -26,7 +26,7 @@ const ModalModificarEspacio = ({ id, espacio, fetchEspacios }) => {
         return;
       }
 
-      fetchEspacios();
+      fetchItems();
       showToast("Espacio modificado con éxito", "success");
     } catch (err) {
       showToast(`Error de red: ${err.message}`, "error");
