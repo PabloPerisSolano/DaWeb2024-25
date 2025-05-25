@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "@/context/AuthContext";
-import { useToast } from "@/context/ToastContext";
-import { fetchWithAuth } from "@/api/api";
+import { toast } from "sonner";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
 import { FaPlusCircle } from "react-icons/fa";
 
-const BaseGestor = ({
+export const PlantillaGestor = ({
   titulo,
   rutaApi,
   ComponenteCard,
@@ -13,8 +12,7 @@ const BaseGestor = ({
   version,
   extraDataTransform = (data) => data,
 }) => {
-  const { handleLogout } = useAuth();
-  const { showToast } = useToast();
+  const fetchWithAuth = useAuthFetch();
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
 
@@ -24,26 +22,20 @@ const BaseGestor = ({
 
   const fetchItems = async () => {
     setLoading(true);
-    try {
-      const res = await fetchWithAuth(rutaApi);
-      const data = await res.json();
 
-      if (!res.ok) {
-        if (res.status === 401) {
-          handleLogout();
-          return;
-        }
+    const res = await fetchWithAuth(rutaApi);
+    const data = await res.json();
 
-        showToast(`Error: ${res.status} - ${data.message}`, "error");
-        return;
-      }
-
-      setItems(extraDataTransform(data));
-    } catch (err) {
-      showToast(`Error de red: ${err.message}`, "error");
-    } finally {
-      setLoading(false);
+    if (!res.ok) {
+      toast.error(`Error al cargar los eventos ${titulo}`, {
+        description: data.mensaje,
+      });
+      return;
     }
+
+    setItems(extraDataTransform(data));
+
+    setLoading(false);
   };
 
   return (
@@ -68,6 +60,10 @@ const BaseGestor = ({
           <div className="text-center text-light">
             <div className="spinner-border" role="status" />
           </div>
+        ) : items.length === 0 ? (
+          <h2 className="text-center text-white">
+            {`No hay ${titulo} en el sistema`}
+          </h2>
         ) : (
           items.map((item) => (
             <ComponenteCard
@@ -84,5 +80,3 @@ const BaseGestor = ({
     </div>
   );
 };
-
-export default BaseGestor;

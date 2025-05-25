@@ -1,58 +1,52 @@
 import { useState } from "react";
-import { useToast } from "@/context/ToastContext";
-import { API_ROUTES, fetchWithAuth } from "@/api/api";
+import { toast } from "sonner";
+import { API_ROUTES } from "@/constants/apiEndpoints";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
 import { FaTimes, FaCheck } from "react-icons/fa";
 
-const ModalReserva = ({ id, evento, fetchItems }) => {
-  const { showToast } = useToast();
-  const [plazasReserva, setPlazasReserva] = useState(0);
+export const ModalReserva = ({ id, evento, fetchItems }) => {
+  const fetchWithAuth = useAuthFetch();
+  const [plazasReserva, setPlazasReserva] = useState(1);
 
   const confirmarReserva = async () => {
     if (evento.plazasDisponibles < plazasReserva) {
-      showToast("No hay suficientes plazas disponibles", "error");
+      toast.error("No hay suficientes plazas disponibles");
       return;
     }
 
     if (plazasReserva <= 0) {
-      showToast("Debes reservar al menos una plaza", "error");
+      toast.error("Debes reservar al menos una plaza");
       return;
     }
 
     if (new Date(evento.ocupacion.fechaFin) < new Date()) {
-      showToast("El evento ya ha finalizado", "error");
+      toast.error("El evento ya ha finalizado");
       return;
     }
 
-    try {
-      const res = await fetchWithAuth(API_ROUTES.RESERVAS, {
-        method: "POST",
-        body: JSON.stringify({
-          idEvento: evento.id,
-          plazasReservadas: plazasReserva,
-        }),
+    const res = await fetchWithAuth(API_ROUTES.RESERVAS, {
+      method: "POST",
+      body: JSON.stringify({
+        idEvento: evento.id,
+        plazasReservadas: plazasReserva,
+      }),
+    });
+
+    setPlazasReserva(0);
+
+    if (!res.ok) {
+      const errorText = await res.json();
+      toast.error("Error al reservar", {
+        description: errorText.plazasReservadas,
       });
-
-      setPlazasReserva(0);
-
-      if (!res.ok) {
-        const errorText = await res.json();
-        showToast(
-          `Error: ${res.status} - ${
-            errorText.plazasReservadas || errorText.mensaje
-          }`,
-          "error"
-        );
-        return;
-      }
-
-      // Esperar para actualizar las plazas disponibles del evento
-      setTimeout(() => {
-        fetchItems();
-        showToast("Reserva realizada con éxito", "success");
-      }, 1000);
-    } catch (err) {
-      showToast(`Error de red: ${err.message}`, "error");
+      return;
     }
+
+    // Esperar para actualizar las plazas disponibles del evento
+    setTimeout(() => {
+      fetchItems();
+      toast.success("Reserva realizada con éxito");
+    }, 1000);
   };
 
   return (
@@ -108,5 +102,3 @@ const ModalReserva = ({ id, evento, fetchItems }) => {
     </div>
   );
 };
-
-export default ModalReserva;

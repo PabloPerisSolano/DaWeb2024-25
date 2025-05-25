@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "@/context/AuthContext";
-import { useToast } from "@/context/ToastContext";
-import { API_ROUTES, fetchWithAuth } from "@/api/api";
-import FiltrosEventos from "@/components/FiltrosEventos";
-import CardEvento from "@/components/CardEvento";
+import { API_ROUTES } from "@/constants/apiEndpoints";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
+import { FiltrosEventos } from "@/components/FiltrosEventos";
+import { CardEvento } from "@/components/cards/CardEvento";
+import { toast } from "sonner";
 
-const ListadoEventos = () => {
-  const { handleLogout } = useAuth();
-  const { showToast } = useToast();
+export default function ListadoEventos() {
+  const fetchWithAuth = useAuthFetch();
   const [loading, setLoading] = useState(true);
   const [eventos, setEventos] = useState([]);
   const [filtros, setFiltros] = useState({
@@ -26,26 +25,20 @@ const ListadoEventos = () => {
 
   const fetchEventos = async () => {
     setLoading(true);
-    try {
-      const res = await fetchWithAuth(API_ROUTES.EVENTOS_LISTADO);
-      const data = await res.json();
 
-      if (!res.ok) {
-        if (res.status === 401) {
-          handleLogout();
-          return;
-        }
+    const res = await fetchWithAuth(API_ROUTES.EVENTOS_LISTADO);
+    const data = await res.json();
 
-        showToast(`Error: ${res.status} - ${data.message}`, "error");
-        return;
-      }
-
-      setEventos(data._embedded.eventoDTOList);
-    } catch (err) {
-      showToast(`Error de red: ${err.message}`, "error");
-    } finally {
-      setLoading(false);
+    if (!res.ok) {
+      toast.error("Error al cargar los eventos", {
+        description: data.mensaje,
+      });
+      return;
     }
+
+    setEventos(data._embedded?.eventoDTOList || []);
+
+    setLoading(false);
   };
 
   const eventosFiltrados = eventos.filter((evento) => {
@@ -99,6 +92,10 @@ const ListadoEventos = () => {
           <div className="text-center text-light">
             <div className="spinner-border" role="status" />
           </div>
+        ) : eventos.length === 0 ? (
+          <h2 className="text-center text-white">
+            No hay eventos en el sistema
+          </h2>
         ) : (
           eventosFiltrados.map((evento) => (
             <CardEvento
@@ -112,6 +109,4 @@ const ListadoEventos = () => {
       </div>
     </div>
   );
-};
-
-export default ListadoEventos;
+}

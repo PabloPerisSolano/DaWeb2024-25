@@ -1,74 +1,134 @@
 import { useState, useEffect } from "react";
-import { API_ROUTES, fetchWithAuth } from "@/api/api";
-import { useToast } from "@/context/ToastContext";
+import { API_ROUTES } from "@/constants/apiEndpoints";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
+import { toast } from "sonner";
 import { FaTimes, FaCheck } from "react-icons/fa";
 
-const ModalModificarEvento = ({ id, fetchItems }) => {
-  const { showToast } = useToast();
+export const ModalNuevoEvento = ({ id, fetchItems }) => {
+  const fetchWithAuth = useAuthFetch();
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [organizador, setOrganizador] = useState("");
-  const [plazas, setPlazas] = useState("");
-  const [categoria, setCategoria] = useState("CULTURAL");
+  const [plazas, setPlazas] = useState(1);
+  const [categoria, setCategoria] = useState("");
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
   const [idEspacioFisico, setIdEspacioFisico] = useState("");
   const [espacios, setEspacios] = useState([]);
 
   useEffect(() => {
+    if (
+      !fechaInicio ||
+      !fechaFin ||
+      !plazas ||
+      isNaN(plazas) ||
+      Number(plazas) < 1 ||
+      new Date(fechaInicio) < new Date() ||
+      new Date(fechaFin) <= new Date(fechaInicio)
+    ) {
+      setEspacios([]);
+      return;
+    }
+
     const fetchEspacios = async () => {
-      try {
-        const res = await fetchWithAuth(API_ROUTES.ESPACIOS);
-        const data = await res.json();
-        setEspacios(data || []);
-      } catch (err) {
-        showToast("No se pudieron cargar los espacios físicos", "error");
-      }
+      const res = await fetchWithAuth(
+        API_ROUTES.ESPACIOS_LIBRES(fechaInicio, fechaFin, plazas)
+      );
+      const data = await res.json();
+      setEspacios(data || []);
     };
+
     fetchEspacios();
-  }, []);
+  }, [fechaInicio, fechaFin, plazas]);
 
   const crearEvento = async () => {
-    try {
-      const res = await fetchWithAuth(API_ROUTES.EVENTOS, {
-        method: "POST",
-        body: JSON.stringify({
-          nombre,
-          descripcion,
-          organizador,
-          plazas,
-          categoria,
-          fechaInicio,
-          fechaFin,
-          idEspacioFisico,
-        }),
+    if (!nombre.trim()) {
+      toast.error("Nombre requerido", {
+        description: "El nombre no puede estar vacío.",
       });
-
-      if (!res.ok) {
-        const errorText = await res.json();
-        let mensaje = "";
-        if (errorText.mensaje) {
-          mensaje = errorText.mensaje;
-        } else {
-          mensaje = JSON.stringify(errorText);
-        }
-        showToast(`Error: ${res.status} - ${mensaje}`, "error");
-        return;
-      }
-
-      fetchItems();
-      showToast("Evento modificado con éxito", "success");
-      setNombre("");
-      setDescripcion("");
-      setOrganizador("");
-      setPlazas("");
-      setCategoria("");
-      setFechaInicio("");
-      setFechaFin("");
-      setIdEspacioFisico("");
-    } catch (err) {
-      showToast(`Error de red: ${err.message}`, "error");
+      return;
     }
+    if (!organizador.trim()) {
+      toast.error("Organizador requerido", {
+        description: "El organizador no puede estar vacío.",
+      });
+      return;
+    }
+    if (!plazas || isNaN(plazas) || Number(plazas) < 1) {
+      toast.error("Plazas inválidas", {
+        description: "Las plazas deben ser un número mayor o igual a 1.",
+      });
+      return;
+    }
+    if (!categoria.trim()) {
+      toast.error("Categoría requerida", {
+        description: "Debes seleccionar una categoría.",
+      });
+      return;
+    }
+    if (!fechaInicio) {
+      toast.error("Fecha de inicio requerida", {
+        description: "Debes seleccionar una fecha de inicio.",
+      });
+      return;
+    }
+    if (new Date(fechaInicio) < new Date()) {
+      toast.error("Fecha de inicio inválida", {
+        description: "La fecha de inicio debe ser posterior al momento actual.",
+      });
+      return;
+    }
+    if (!fechaFin) {
+      toast.error("Fecha de fin requerida", {
+        description: "Debes seleccionar una fecha de fin.",
+      });
+      return;
+    }
+    if (new Date(fechaFin) <= new Date(fechaInicio)) {
+      toast.error("Fechas inválidas", {
+        description: "La fecha de fin debe ser posterior a la de inicio.",
+      });
+      return;
+    }
+    if (!idEspacioFisico) {
+      toast.error("Espacio físico requerido", {
+        description: "Debes seleccionar un espacio físico.",
+      });
+      return;
+    }
+
+    const res = await fetchWithAuth(API_ROUTES.EVENTOS, {
+      method: "POST",
+      body: JSON.stringify({
+        nombre,
+        descripcion,
+        organizador,
+        plazas,
+        categoria,
+        fechaInicio,
+        fechaFin,
+        idEspacioFisico,
+      }),
+    });
+
+    if (!res.ok) {
+      const errorText = await res.json();
+      toast.error("Error al crear el evento", {
+        description: errorText.mensaje,
+      });
+      return;
+    }
+
+    fetchItems();
+    toast.success("Evento creado con éxito");
+    setNombre("");
+    setDescripcion("");
+    setOrganizador("");
+    setPlazas("");
+    setCategoria("");
+    setFechaInicio("");
+    setFechaFin("");
+    setIdEspacioFisico("");
   };
 
   return (
@@ -129,6 +189,7 @@ const ModalModificarEvento = ({ id, fetchItems }) => {
                   value={categoria}
                   onChange={(e) => setCategoria(e.target.value)}
                 >
+                  <option value="">Selecciona una categoría</option>
                   <option value="ACADEMICO">ACADEMICO</option>
                   <option value="CULTURAL">CULTURAL</option>
                   <option value="ENTRETENIMIENTO">ENTRETENIMIENTO</option>
@@ -161,7 +222,9 @@ const ModalModificarEvento = ({ id, fetchItems }) => {
                   value={idEspacioFisico}
                   onChange={(e) => setIdEspacioFisico(e.target.value)}
                 >
-                  <option value="">Selecciona un espacio</option>
+                  <option value="">
+                    Selecciona un espacio libre en esas fechas
+                  </option>
                   {espacios.map((espacio) => (
                     <option key={espacio.id} value={espacio.id}>
                       {espacio.nombre} - Capacidad: {espacio.capacidad}
@@ -195,5 +258,3 @@ const ModalModificarEvento = ({ id, fetchItems }) => {
     </div>
   );
 };
-
-export default ModalModificarEvento;

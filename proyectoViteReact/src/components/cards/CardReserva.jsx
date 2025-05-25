@@ -1,7 +1,10 @@
+import { toast } from "sonner";
 import { useEffect, useState } from "react";
-import { API_ROUTES, fetchWithAuth } from "@/api/api";
+import { API_ROUTES } from "@/constants/apiEndpoints";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
 
-const CardReserva = ({ reserva }) => {
+export const CardReserva = ({ reserva }) => {
+  const fetchWithAuth = useAuthFetch();
   const [evento, setEvento] = useState({});
 
   const getEstadoReserva = () => {
@@ -26,14 +29,12 @@ const CardReserva = ({ reserva }) => {
   useEffect(() => {
     const fetchEvento = async () => {
       try {
-        const res = await fetchWithAuth(
-          `${API_ROUTES.EVENTOS}/${reserva.idEvento}`
-        );
+        const res = await fetchWithAuth(API_ROUTES.EVENTO_ID(reserva.idEvento));
         const data = await res.json();
 
         setEvento(data);
       } catch (err) {
-        showToast(`Error de red: ${err.message}`, "error");
+        toast(`Error de red: ${err.message}`);
       }
     };
     fetchEvento();
@@ -76,5 +77,3 @@ const CardReserva = ({ reserva }) => {
     </div>
   );
 };
-
-export default CardReserva;

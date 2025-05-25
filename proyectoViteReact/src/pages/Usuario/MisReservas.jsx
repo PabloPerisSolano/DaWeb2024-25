@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "@/context/AuthContext";
-import { useToast } from "@/context/ToastContext";
-import { API_ROUTES, fetchWithAuth } from "@/api/api";
-import CardReserva from "@/components/CardReserva";
+import { toast } from "sonner";
+import { API_ROUTES } from "@/constants/apiEndpoints";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
+import { CardReserva } from "@/components/cards/CardReserva";
 
-const MisReservas = () => {
-  const { handleLogout } = useAuth();
-  const { showToast } = useToast();
+export default function MisReservas() {
+  const fetchWithAuth = useAuthFetch();
   const [loading, setLoading] = useState(true);
   const [reservas, setReservas] = useState([]);
 
@@ -16,26 +15,20 @@ const MisReservas = () => {
 
   const fetchMisReservas = async () => {
     setLoading(true);
-    try {
-      const res = await fetchWithAuth(API_ROUTES.RESERVAS_MIAS);
-      const data = await res.json();
 
-      if (!res.ok) {
-        if (res.status === 401) {
-          handleLogout();
-          return;
-        }
+    const res = await fetchWithAuth(API_ROUTES.RESERVAS_MIAS);
+    const data = await res.json();
 
-        showToast(`Error: ${res.status} - ${data.message}`, "error");
-        return;
-      }
-
-      setReservas(data._embedded.reservaDTOList);
-    } catch (err) {
-      showToast(`Error de red: ${err.message}`, "error");
-    } finally {
-      setLoading(false);
+    if (!res.ok) {
+      toast.error("Error al cargar las reservas", {
+        description: data.mensaje,
+      });
+      return;
     }
+
+    setReservas(data._embedded?.reservaDTOList || []);
+
+    setLoading(false);
   };
 
   return (
@@ -49,6 +42,8 @@ const MisReservas = () => {
           <div className="text-center text-light">
             <div className="spinner-border" role="status" />
           </div>
+        ) : reservas.length === 0 ? (
+          <h2 className="text-center text-white">No tienes reservas</h2>
         ) : (
           reservas.map((reserva) => (
             <CardReserva key={reserva.id} reserva={reserva} />
@@ -57,6 +52,4 @@ const MisReservas = () => {
       </div>
     </div>
   );
-};
-
-export default MisReservas;
+}

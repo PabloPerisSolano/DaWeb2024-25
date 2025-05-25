@@ -1,22 +1,22 @@
-import { useContext, useState } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { FaSignOutAlt, FaBars, FaUser } from "react-icons/fa";
-import NavMenu from "./NavMenu";
+import NavMenu from "@/components/header/NavMenu";
+import { ROUTES } from "@/constants/routes";
 import "./Header.css";
 
-function Header() {
+export const Header = () => {
   const { user, userRoles, handleLogout } = useAuth();
 
   if (!user) return null;
 
   const adminLinks = [
-    { name: "Gestionar Espacios", path: "/espacios" },
-    { name: "Gestionar Eventos", path: "/eventos" },
+    { name: "Gestionar Espacios", path: ROUTES.ESPACIOS },
+    { name: "Gestionar Eventos", path: ROUTES.EVENTOS },
   ];
 
   const userLinks = [
-    { name: "Ver Eventos", path: "/listado-eventos" },
-    { name: "Mis Reservas", path: "/reservas" },
+    { name: "Ver Eventos", path: ROUTES.LISTADO_EVENTOS },
+    { name: "Mis Reservas", path: ROUTES.RESERVAS },
   ];
 
   const headerTitle = userRoles.isAdmin
@@ -57,6 +57,4 @@ function Header() {
       </button>
     </header>
   );
-}
-
-export default Header;
+};

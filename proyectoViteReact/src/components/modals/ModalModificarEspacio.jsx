@@ -1,36 +1,47 @@
 import { useState } from "react";
-import { API_ROUTES, fetchWithAuth } from "@/api/api";
-import { useToast } from "@/context/ToastContext";
+import { API_ROUTES } from "@/constants/apiEndpoints";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
+import { toast } from "sonner";
 import { FaTimes, FaCheck } from "react-icons/fa";
 
-const ModalModificarEspacio = ({ id, espacio, fetchItems }) => {
-  const { showToast } = useToast();
+export const ModalModificarEspacio = ({ id, espacio, fetchItems }) => {
+  const fetchWithAuth = useAuthFetch();
   const [nombre, setNombre] = useState(espacio.nombre || "");
   const [descripcion, setDescripcion] = useState(espacio.descripcion || "");
-  const [capacidad, setCapacidad] = useState(espacio.capacidad || 0);
+  const [capacidad, setCapacidad] = useState(espacio.capacidad || 1);
 
   const confirmarModificacion = async () => {
-    try {
-      const res = await fetchWithAuth(`${API_ROUTES.ESPACIOS}/${espacio.id}`, {
-        method: "PATCH",
-        body: JSON.stringify({
-          nombre,
-          descripcion,
-          capacidad,
-        }),
+    if (!nombre.trim()) {
+      toast.error("Nombre requerido", {
+        description: "El nombre no puede estar vacío.",
       });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        showToast(`Error: ${res.status} - ${errorText}`, "error");
-        return;
-      }
-
-      fetchItems();
-      showToast("Espacio modificado con éxito", "success");
-    } catch (err) {
-      showToast(`Error de red: ${err.message}`, "error");
+      return;
     }
+    if (!capacidad || isNaN(capacidad) || Number(capacidad) < 1) {
+      toast.error("Capacidad inválida", {
+        description: "La capacidad debe ser un número mayor o igual a 1.",
+      });
+      return;
+    }
+
+    const res = await fetchWithAuth(API_ROUTES.ESPACIO_ID(espacio.id), {
+      method: "PATCH",
+      body: JSON.stringify({
+        nombre,
+        descripcion,
+        capacidad,
+      }),
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      toast.error("Error al modificar el espacio", {
+        description: errorText,
+      });
+    }
+
+    fetchItems();
+    toast.success("Espacio modificado con éxito");
   };
 
   return (
@@ -101,5 +112,3 @@ const ModalModificarEspacio = ({ id, espacio, fetchItems }) => {
     </div>
   );
 };
-
-export default ModalModificarEspacio;

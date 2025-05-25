@@ -1,31 +1,27 @@
-import { useToast } from "@/context/ToastContext";
-import { API_ROUTES, fetchWithAuth } from "@/api/api";
+import { toast } from "sonner";
+import { API_ROUTES } from "@/constants/apiEndpoints";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
 import { FaPencilAlt, FaPowerOff } from "react-icons/fa";
-import ModalModificarEspacio from "@/components/ModalModificarEspacio";
+import { ModalModificarEspacio } from "@/components/modals/ModalModificarEspacio";
 
-const CardEspacio = ({ espacio, fetchItems }) => {
-  const { showToast } = useToast();
+export const CardEspacio = ({ espacio, fetchItems }) => {
+  const fetchWithAuth = useAuthFetch();
 
   const cambiarEstado = async () => {
-    try {
-      const res = await fetchWithAuth(
-        `${API_ROUTES.ESPACIOS}/${espacio.id}/estado`,
-        {
-          method: "PUT",
-        }
-      );
+    const res = await fetchWithAuth(API_ROUTES.ESPACIO_ESTADO(espacio.id), {
+      method: "PUT",
+    });
 
-      if (!res.ok) {
-        const errorText = await res.text();
-        showToast(`Error: ${res.status} - ${errorText}`, "error");
-        return;
-      }
-
-      fetchItems();
-      showToast("Estado modificado con éxito", "success");
-    } catch (err) {
-      showToast(`Error de red: ${err.message}`, "error");
+    if (!res.ok) {
+      const errorText = await res.text();
+      toast.error("Error al cambiar estado del espacio", {
+        description: errorText,
+      });
+      return;
     }
+
+    fetchItems();
+    toast.success("Estado modificado con éxito");
   };
 
   const getEstadoEspacio = () => {
@@ -92,5 +88,3 @@ const CardEspacio = ({ espacio, fetchItems }) => {
     </div>
   );
 };
-
-export default CardEspacio;

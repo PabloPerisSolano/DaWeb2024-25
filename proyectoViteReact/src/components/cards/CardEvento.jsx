@@ -1,32 +1,28 @@
-import { useToast } from "@/context/ToastContext";
-import { API_ROUTES, fetchWithAuth } from "@/api/api";
+import { toast } from "sonner";
+import { API_ROUTES } from "@/constants/apiEndpoints";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
 import { FaPencilAlt, FaRegCalendarPlus, FaPowerOff } from "react-icons/fa";
-import ModalModificarEvento from "@/components/ModalModificarEvento";
-import ModalReserva from "@/components/ModalReserva";
+import { ModalModificarEvento } from "@/components/modals/ModalModificarEvento";
+import { ModalReserva } from "@/components/modals/ModalReserva";
 
-const CardEvento = ({ evento, version, fetchItems }) => {
-  const { showToast } = useToast();
+export const CardEvento = ({ evento, version, fetchItems }) => {
+  const fetchWithAuth = useAuthFetch();
 
   const cancelarEvento = async () => {
-    try {
-      const res = await fetchWithAuth(
-        `${API_ROUTES.EVENTOS}/${evento.id}/ocupacion`,
-        {
-          method: "PUT",
-        }
-      );
+    const res = await fetchWithAuth(API_ROUTES.EVENTO_OCUPACION(evento.id), {
+      method: "PUT",
+    });
 
-      if (!res.ok) {
-        const errorJson = await res.json();
-        showToast(`Error: ${res.status} - ${errorJson.mensaje}`, "error");
-        return;
-      }
-
-      fetchItems();
-      showToast("Evento cancelado con éxito", "success");
-    } catch (err) {
-      showToast(`Error de red: ${err.message}`, "error");
+    if (!res.ok) {
+      const errorJson = await res.json();
+      toast.error("Error al cancelar el evento", {
+        description: errorJson.mensaje,
+      });
+      return;
     }
+
+    fetchItems();
+    toast.success("Evento cancelado con éxito");
   };
 
   const getEstadoEvento = () => {
@@ -164,5 +160,3 @@ const CardEvento = ({ evento, version, fetchItems }) => {
     </div>
   );
 };
-
-export default CardEvento;

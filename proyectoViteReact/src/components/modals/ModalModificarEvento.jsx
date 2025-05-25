@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { API_ROUTES, fetchWithAuth } from "@/api/api";
-import { useToast } from "@/context/ToastContext";
+import { API_ROUTES } from "@/constants/apiEndpoints";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
+import { toast } from "sonner";
 import { FaTimes, FaCheck } from "react-icons/fa";
 
-const ModalModificarEvento = ({ id, evento, fetchItems }) => {
-  const { showToast } = useToast();
+export const ModalModificarEvento = ({ id, evento, fetchItems }) => {
+  const fetchWithAuth = useAuthFetch();
   const [descripcion, setDescripcion] = useState(evento.descripcion || "");
   const [fechaInicio, setFechaInicio] = useState(
     evento.ocupacion.fechaInicio.substring(0, 16) || ""
@@ -12,49 +13,96 @@ const ModalModificarEvento = ({ id, evento, fetchItems }) => {
   const [fechaFin, setFechaFin] = useState(
     evento.ocupacion.fechaFin.substring(0, 16) || ""
   );
-  const [plazas, setPlazas] = useState(evento.plazas || "");
+  const [plazas, setPlazas] = useState(evento.plazas || 1);
   const [idEspacioFisico, setIdEspacioFisico] = useState(
     evento.ocupacion.espacioFisico.id || ""
   );
   const [espacios, setEspacios] = useState([]);
 
   useEffect(() => {
+    if (
+      !fechaInicio ||
+      !fechaFin ||
+      !plazas ||
+      isNaN(plazas) ||
+      Number(plazas) < 1 ||
+      new Date(fechaInicio) < new Date() ||
+      new Date(fechaFin) <= new Date(fechaInicio)
+    ) {
+      setEspacios([]);
+      return;
+    }
+
     const fetchEspacios = async () => {
-      try {
-        const res = await fetchWithAuth(API_ROUTES.ESPACIOS);
-        const data = await res.json();
-        setEspacios(data || []);
-      } catch (err) {
-        showToast("No se pudieron cargar los espacios físicos", "error");
-      }
+      const res = await fetchWithAuth(
+        API_ROUTES.ESPACIOS_LIBRES(fechaInicio, fechaFin, plazas)
+      );
+      const data = await res.json();
+      setEspacios(data || []);
     };
+
     fetchEspacios();
-  }, []);
+  }, [fechaInicio, fechaFin, plazas]);
 
   const confirmarModificacion = async () => {
-    try {
-      const res = await fetchWithAuth(`${API_ROUTES.EVENTOS}/${evento.id}`, {
-        method: "PATCH",
-        body: JSON.stringify({
-          descripcion,
-          fechaInicio,
-          fechaFin,
-          plazas,
-          idEspacioFisico,
-        }),
+    if (!plazas || isNaN(plazas) || Number(plazas) < 1) {
+      toast.error("Plazas inválidas", {
+        description: "Las plazas deben ser un número mayor o igual a 1.",
       });
-
-      if (!res.ok) {
-        const errorText = await res.json();
-        showToast(`Error: ${res.status} - ${errorText.mensaje}`, "error");
-        return;
-      }
-
-      fetchItems();
-      showToast("Evento modificado con éxito", "success");
-    } catch (err) {
-      showToast(`Error de red: ${err.message}`, "error");
+      return;
     }
+    if (!fechaInicio) {
+      toast.error("Fecha de inicio requerida", {
+        description: "Debes seleccionar una fecha de inicio.",
+      });
+      return;
+    }
+    if (new Date(fechaInicio) < new Date()) {
+      toast.error("Fecha de inicio inválida", {
+        description: "La fecha de inicio debe ser posterior al momento actual.",
+      });
+      return;
+    }
+    if (!fechaFin) {
+      toast.error("Fecha de fin requerida", {
+        description: "Debes seleccionar una fecha de fin.",
+      });
+      return;
+    }
+    if (new Date(fechaFin) <= new Date(fechaInicio)) {
+      toast.error("Fechas inválidas", {
+        description: "La fecha de fin debe ser posterior a la de inicio.",
+      });
+      return;
+    }
+    if (!idEspacioFisico) {
+      toast.error("Espacio físico requerido", {
+        description: "Debes seleccionar un espacio físico.",
+      });
+      return;
+    }
+
+    const res = await fetchWithAuth(API_ROUTES.EVENTO_ID(evento.id), {
+      method: "PATCH",
+      body: JSON.stringify({
+        descripcion,
+        fechaInicio,
+        fechaFin,
+        plazas,
+        idEspacioFisico,
+      }),
+    });
+
+    if (!res.ok) {
+      const errorText = await res.json();
+      toast.error("Error al modificar el evento", {
+        description: errorText.mensaje,
+      });
+      return;
+    }
+
+    fetchItems();
+    toast.success("Evento modificado con éxito");
   };
 
   return (
@@ -116,6 +164,9 @@ const ModalModificarEvento = ({ id, evento, fetchItems }) => {
                   value={idEspacioFisico}
                   onChange={(e) => setIdEspacioFisico(e.target.value)}
                 >
+                  <option value="">
+                    Selecciona un espacio libre en esas fechas
+                  </option>
                   {espacios.map((espacio) => (
                     <option key={espacio.id} value={espacio.id}>
                       {espacio.nombre} - Capacidad: {espacio.capacidad}
@@ -149,5 +200,3 @@ const ModalModificarEvento = ({ id, evento, fetchItems }) => {
     </div>
   );
 };
-
-export default ModalModificarEvento;

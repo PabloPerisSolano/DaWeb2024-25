@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 
-function NavMenu({ links }) {
+export default function NavMenu({ links }) {
   return (
     <ul className="nav">
       {links.map((link) => (
@@ -13,5 +13,3 @@ function NavMenu({ links }) {
     </ul>
   );
 }
-
-export default NavMenu;

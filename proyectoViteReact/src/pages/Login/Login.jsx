@@ -1,44 +1,43 @@
 import "./Login.css";
 import { useState } from "react";
-import { useToast } from "@/context/ToastContext";
+import { toast } from "sonner";
 import { FaGithub, FaSignInAlt } from "react-icons/fa";
-import { API_ROUTES, fetchWithAuth } from "@/api/api";
-import { useAuth } from "@/context/AuthContext";
+import { API_ROUTES } from "@/constants/apiEndpoints";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
+import { useAuth } from "@/hooks/useAuth";
 
-function Login() {
+export default function Login() {
+  const fetchWithAuth = useAuthFetch();
   const { handleLogin } = useAuth();
-  const { showToast } = useToast();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const formData = new URLSearchParams();
-      formData.append("username", username);
-      formData.append("password", password);
+    const formData = new URLSearchParams();
+    formData.append("username", username);
+    formData.append("password", password);
 
-      const response = await fetchWithAuth(API_ROUTES.LOGIN, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: formData.toString(),
+    const response = await fetchWithAuth(API_ROUTES.LOGIN, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: formData.toString(),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      handleLogin({
+        idUsuario: data.idUsuario,
+        roles: data.roles,
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        handleLogin({
-          idUsuario: data.idUsuario,
-          roles: data.roles,
-        });
-      } else {
-        showToast(`Error: ${response.status} - ${data.error}`, "error");
-      }
-    } catch (error) {
-      showToast("Error de conexión", "error");
+    } else {
+      toast.error("Error al iniciar sesión", {
+        description: data.error,
+      });
     }
   };
 
@@ -62,7 +61,9 @@ function Login() {
 
         if (popup) popup.close();
       } else if (event.data?.error) {
-        showToast(event.data.error, "error");
+        toast.error("Error al iniciar sesión", {
+          description: event.data.error,
+        });
         if (popup) popup.close();
       }
       window.removeEventListener("message", messageListener);
@@ -130,5 +131,3 @@ function Login() {
     </div>
   );
 }
-
-export default Login;

@@ -1,42 +1,66 @@
 import { useState } from "react";
-import { API_ROUTES, fetchWithAuth } from "@/api/api";
-import { useToast } from "@/context/ToastContext";
+import { API_ROUTES } from "@/constants/apiEndpoints";
+import { useAuthFetch } from "@/hooks/useAuthFetch";
+import { toast } from "sonner";
 import { FaTimes, FaCheck } from "react-icons/fa";
 
-const ModalNuevoEspacio = ({ id, fetchItems }) => {
-  const { showToast } = useToast();
+export const ModalNuevoEspacio = ({ id, fetchItems }) => {
+  const fetchWithAuth = useAuthFetch();
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [propietario, setPropietario] = useState("");
-  const [capacidad, setCapacidad] = useState(0);
+  const [capacidad, setCapacidad] = useState(1);
   const [direccion, setDireccion] = useState("");
 
   const crearEspacio = async () => {
-    try {
-      const res = await fetchWithAuth(API_ROUTES.ESPACIOS, {
-        method: "POST",
-        body: JSON.stringify({
-          nombre,
-          descripcion,
-          propietario,
-          capacidad,
-          direccion,
-          longitud: 0.0,
-          latitud: 0.0,
-        }),
+    if (!nombre.trim()) {
+      toast.error("Nombre requerido", {
+        description: "El nombre no puede estar vacío.",
       });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        showToast(`Error: ${res.status} - ${errorText}`, "error");
-        return;
-      }
-
-      fetchItems();
-      showToast("Espacio modificado con éxito", "success");
-    } catch (err) {
-      showToast(`Error de red: ${err.message}`, "error");
+      return;
     }
+    if (!propietario.trim()) {
+      toast.error("Propietario requerido", {
+        description: "El propietario no puede estar vacío.",
+      });
+      return;
+    }
+    if (!direccion.trim()) {
+      toast.error("Dirección requerida", {
+        description: "La dirección no puede estar vacía.",
+      });
+      return;
+    }
+    if (!capacidad || isNaN(capacidad) || Number(capacidad) < 1) {
+      toast.error("Capacidad inválida", {
+        description: "La capacidad debe ser un número mayor o igual a 1.",
+      });
+      return;
+    }
+
+    const res = await fetchWithAuth(API_ROUTES.ESPACIOS, {
+      method: "POST",
+      body: JSON.stringify({
+        nombre,
+        descripcion,
+        propietario,
+        capacidad,
+        direccion,
+        longitud: 0.0,
+        latitud: 0.0,
+      }),
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      toast.error("Error al crear el espacio", {
+        description: errorText,
+      });
+      return;
+    }
+
+    fetchItems();
+    toast.success("Espacio creado con éxito");
   };
 
   return (
@@ -85,7 +109,7 @@ const ModalNuevoEspacio = ({ id, fetchItems }) => {
                 <input
                   type="number"
                   className="form-control"
-                  min="0"
+                  min="1"
                   value={capacidad}
                   onChange={(e) => setCapacidad(e.target.value)}
                 />
@@ -125,5 +149,3 @@ const ModalNuevoEspacio = ({ id, fetchItems }) => {
     </div>
   );
 };
-
-export default ModalNuevoEspacio;

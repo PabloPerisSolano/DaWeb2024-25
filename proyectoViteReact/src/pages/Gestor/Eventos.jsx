@@ -1,18 +1,18 @@
-import { API_ROUTES } from "@/api/api";
-import CardEvento from "@/components/CardEvento";
-import ModalNuevoEvento from "@/components/ModalNuevoEvento";
-import BaseGestor from "@/components/BaseGestor";
+import { API_ROUTES } from "@/constants/apiEndpoints";
+import { CardEvento } from "@/components/cards/CardEvento";
+import { ModalNuevoEvento } from "@/components/modals/ModalNuevoEvento";
+import { PlantillaGestor } from "@/components/PlantillaGestor";
 
-const Eventos = () => (
-  <BaseGestor
-    titulo="Eventos"
-    rutaApi={API_ROUTES.EVENTOS_LISTADO}
-    ComponenteCard={CardEvento}
-    ComponenteModal={ModalNuevoEvento}
-    textoBoton="Crear Evento"
-    version="GESTOR"
-    extraDataTransform={(data) => data._embedded.eventoDTOList}
-  />
-);
-
-export default Eventos;
+export default function Eventos() {
+  return (
+    <PlantillaGestor
+      titulo="Eventos"
+      rutaApi={API_ROUTES.EVENTOS_LISTADO}
+      ComponenteCard={CardEvento}
+      ComponenteModal={ModalNuevoEvento}
+      textoBoton="Crear Evento"
+      version="GESTOR"
+      extraDataTransform={(data) => data._embedded?.eventoDTOList || []}
+    />
+  );
+}
