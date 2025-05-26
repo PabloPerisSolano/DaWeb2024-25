@@ -49,7 +49,7 @@ export const FiltrosEventos = ({ filtros, setFiltros }) => {
               }
             >
               <option value="">Estado: Todos</option>
-              <option value="false">Activos</option>
+              <option value="false">No cancelados</option>
               <option value="true">Cancelados</option>
             </select>
           </section>

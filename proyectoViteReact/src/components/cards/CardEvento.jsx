@@ -21,7 +21,11 @@ export const CardEvento = ({ evento, version, onUpdate }) => {
       return;
     }
 
-    fetchItems();
+    const resEvento = await fetchWithAuth(API_ROUTES.EVENTO_ID(evento.id));
+    const eventoActualizado = await resEvento.json();
+
+    if (onUpdate) onUpdate(eventoActualizado);
+
     toast.success("Evento cancelado con éxito");
   };
 

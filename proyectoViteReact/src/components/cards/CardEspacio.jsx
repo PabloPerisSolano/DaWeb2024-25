@@ -20,7 +20,11 @@ export const CardEspacio = ({ espacio, onUpdate }) => {
       return;
     }
 
-    fetchItems();
+    const resEspacio = await fetchWithAuth(API_ROUTES.ESPACIO_ID(espacio.id));
+    const espacioActualizado = await resEspacio.json();
+
+    if (onUpdate) onUpdate(espacioActualizado);
+
     toast.success("Estado modificado con éxito");
   };
 

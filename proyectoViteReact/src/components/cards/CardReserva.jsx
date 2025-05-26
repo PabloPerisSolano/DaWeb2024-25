@@ -1,4 +1,3 @@
-import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { API_ROUTES } from "@/constants/apiEndpoints";
 import { useAuthFetch } from "@/hooks/useAuthFetch";
