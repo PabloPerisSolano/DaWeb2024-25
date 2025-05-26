@@ -4,7 +4,7 @@ import { useAuthFetch } from "@/hooks/useAuthFetch";
 import { toast } from "sonner";
 import { FaTimes, FaCheck } from "react-icons/fa";
 
-export const ModalNuevoEvento = ({ id, fetchItems }) => {
+export const ModalNuevoEvento = ({ id, onAdd }) => {
   const fetchWithAuth = useAuthFetch();
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
@@ -119,8 +119,15 @@ export const ModalNuevoEvento = ({ id, fetchItems }) => {
       return;
     }
 
-    fetchItems();
+    const location = res.headers.get("Location");
+    const idEventoNuevo = location.split("/").pop();
+
+    const resEvento = await fetchWithAuth(API_ROUTES.EVENTO_ID(idEventoNuevo));
+    const nuevoEvento = await resEvento.json();
+    if (onAdd) onAdd(nuevoEvento);
+
     toast.success("Evento creado con éxito");
+
     setNombre("");
     setDescripcion("");
     setOrganizador("");

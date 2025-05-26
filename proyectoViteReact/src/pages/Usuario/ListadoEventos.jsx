@@ -102,7 +102,13 @@ export default function ListadoEventos() {
               key={evento.id}
               evento={evento}
               version="USUARIO"
-              fetchItems={fetchEventos}
+              onUpdate={(eventoActualizado) =>
+                setEventos((prev) =>
+                  prev.map((ev) =>
+                    ev.id === eventoActualizado.id ? eventoActualizado : ev
+                  )
+                )
+              }
             />
           ))
         )}

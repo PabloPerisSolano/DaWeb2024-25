@@ -4,7 +4,7 @@ import { useAuthFetch } from "@/hooks/useAuthFetch";
 import { FaPencilAlt, FaPowerOff } from "react-icons/fa";
 import { ModalModificarEspacio } from "@/components/modals/ModalModificarEspacio";
 
-export const CardEspacio = ({ espacio, fetchItems }) => {
+export const CardEspacio = ({ espacio, onUpdate }) => {
   const fetchWithAuth = useAuthFetch();
 
   const cambiarEstado = async () => {
@@ -83,7 +83,7 @@ export const CardEspacio = ({ espacio, fetchItems }) => {
       <ModalModificarEspacio
         id={`modalModificarEspacio-${espacio.id}`}
         espacio={espacio}
-        fetchItems={fetchItems}
+        onUpdate={onUpdate}
       />
     </div>
   );

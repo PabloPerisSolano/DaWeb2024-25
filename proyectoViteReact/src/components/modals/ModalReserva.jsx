@@ -4,7 +4,7 @@ import { API_ROUTES } from "@/constants/apiEndpoints";
 import { useAuthFetch } from "@/hooks/useAuthFetch";
 import { FaTimes, FaCheck } from "react-icons/fa";
 
-export const ModalReserva = ({ id, evento, fetchItems }) => {
+export const ModalReserva = ({ id, evento, onUpdate }) => {
   const fetchWithAuth = useAuthFetch();
   const [plazasReserva, setPlazasReserva] = useState(1);
 
@@ -42,9 +42,12 @@ export const ModalReserva = ({ id, evento, fetchItems }) => {
       return;
     }
 
-    // Esperar para actualizar las plazas disponibles del evento
-    setTimeout(() => {
-      fetchItems();
+    // Esperar a RabbitMQ para actualizar las plazas disponibles del evento
+    setTimeout(async () => {
+      const resEvento = await fetchWithAuth(API_ROUTES.EVENTO_ID(evento.id));
+      const eventoActualizado = await resEvento.json();
+
+      if (onUpdate) onUpdate(eventoActualizado);
       toast.success("Reserva realizada con éxito");
     }, 1000);
   };

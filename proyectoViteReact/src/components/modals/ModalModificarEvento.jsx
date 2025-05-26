@@ -4,7 +4,7 @@ import { useAuthFetch } from "@/hooks/useAuthFetch";
 import { toast } from "sonner";
 import { FaTimes, FaCheck } from "react-icons/fa";
 
-export const ModalModificarEvento = ({ id, evento, fetchItems }) => {
+export const ModalModificarEvento = ({ id, evento, onUpdate }) => {
   const fetchWithAuth = useAuthFetch();
   const [descripcion, setDescripcion] = useState(evento.descripcion || "");
   const [fechaInicio, setFechaInicio] = useState(
@@ -101,7 +101,11 @@ export const ModalModificarEvento = ({ id, evento, fetchItems }) => {
       return;
     }
 
-    fetchItems();
+    const resEvento = await fetchWithAuth(API_ROUTES.EVENTO_ID(evento.id));
+    const eventoActualizado = await resEvento.json();
+
+    if (onUpdate) onUpdate(eventoActualizado);
+
     toast.success("Evento modificado con éxito");
   };
 

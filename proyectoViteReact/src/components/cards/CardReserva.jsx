@@ -28,14 +28,10 @@ export const CardReserva = ({ reserva }) => {
 
   useEffect(() => {
     const fetchEvento = async () => {
-      try {
-        const res = await fetchWithAuth(API_ROUTES.EVENTO_ID(reserva.idEvento));
-        const data = await res.json();
+      const res = await fetchWithAuth(API_ROUTES.EVENTO_ID(reserva.idEvento));
+      const data = await res.json();
 
-        setEvento(data);
-      } catch (err) {
-        toast(`Error de red: ${err.message}`);
-      }
+      setEvento(data);
     };
     fetchEvento();
   }, [reserva.idEvento]);

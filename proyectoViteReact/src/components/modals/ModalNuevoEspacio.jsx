@@ -4,7 +4,7 @@ import { useAuthFetch } from "@/hooks/useAuthFetch";
 import { toast } from "sonner";
 import { FaTimes, FaCheck } from "react-icons/fa";
 
-export const ModalNuevoEspacio = ({ id, fetchItems }) => {
+export const ModalNuevoEspacio = ({ id, onAdd }) => {
   const fetchWithAuth = useAuthFetch();
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
@@ -59,8 +59,22 @@ export const ModalNuevoEspacio = ({ id, fetchItems }) => {
       return;
     }
 
-    fetchItems();
+    const location = res.headers.get("Location");
+    const idEspacioNuevo = location.split("/").pop();
+
+    const resEspacio = await fetchWithAuth(
+      API_ROUTES.ESPACIO_ID(idEspacioNuevo)
+    );
+    const nuevoEspacio = await resEspacio.json();
+    if (onAdd) onAdd(nuevoEspacio);
+
     toast.success("Espacio creado con éxito");
+
+    setNombre("");
+    setDescripcion("");
+    setPropietario("");
+    setCapacidad(1);
+    setDireccion("");
   };
 
   return (

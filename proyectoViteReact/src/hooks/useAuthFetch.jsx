@@ -23,6 +23,7 @@ export const useAuthFetch = () => {
 
       if (response.status === 401) {
         toast.error("Debes estar autenticado para acceder.");
+        localStorage.removeItem("user");
         navigate(ROUTES.LOGIN);
       }
 

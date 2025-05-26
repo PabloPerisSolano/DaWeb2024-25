@@ -70,13 +70,20 @@ export const PlantillaGestor = ({
               key={item.id}
               {...(titulo === "Eventos" ? { evento: item } : { espacio: item })}
               version={version}
-              fetchItems={fetchItems}
+              onUpdate={(actualizado) =>
+                setItems((prev) =>
+                  prev.map((i) => (i.id === actualizado.id ? actualizado : i))
+                )
+              }
             />
           ))
         )}
       </section>
 
-      <ComponenteModal id={`modalNuevo${titulo}`} fetchItems={fetchItems} />
+      <ComponenteModal
+        id={`modalNuevo${titulo}`}
+        onAdd={(nuevoItem) => setItems((prev) => [...prev, nuevoItem])}
+      />
     </div>
   );
 };

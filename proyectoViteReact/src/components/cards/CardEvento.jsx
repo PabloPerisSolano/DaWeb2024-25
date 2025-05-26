@@ -5,7 +5,7 @@ import { FaPencilAlt, FaRegCalendarPlus, FaPowerOff } from "react-icons/fa";
 import { ModalModificarEvento } from "@/components/modals/ModalModificarEvento";
 import { ModalReserva } from "@/components/modals/ModalReserva";
 
-export const CardEvento = ({ evento, version, fetchItems }) => {
+export const CardEvento = ({ evento, version, onUpdate }) => {
   const fetchWithAuth = useAuthFetch();
 
   const cancelarEvento = async () => {
@@ -148,12 +148,12 @@ export const CardEvento = ({ evento, version, fetchItems }) => {
           <ModalModificarEvento
             id={`modalModificarEvento-${evento.id}`}
             evento={evento}
-            fetchItems={fetchItems}
+            onUpdate={onUpdate}
           />
           <ModalReserva
             id={`modalReserva-${evento.id}`}
             evento={evento}
-            fetchItems={fetchItems}
+            onUpdate={onUpdate}
           />
         </>
       )}
